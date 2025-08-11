@@ -1,51 +1,596 @@
-<!DOCTYPE html>
-<!-- saved from url=(0023)https://guns.lol/dotavi -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="./@a_files/ff9399e606869db4.css" data-precedence="next"><link rel="stylesheet" href="./@a_files/70796fed0f690c8f.css" data-precedence="next"><link rel="stylesheet" href="./@a_files/6054a835c0611161.css" data-precedence="next"><link rel="preload" as="script" fetchpriority="low" href="./@a_files/webpack-b34e4bd496496897.js.download"><script src="./@a_files/4bd1b696-5cc00fdd89cac993.js.download" async=""></script><script src="./@a_files/1684-ccd0ab83cbafdc8f.js.download" async=""></script><script src="./@a_files/main-app-c95b87e4dbcdea77.js.download" async=""></script><script src="./@a_files/layout-c453b8d241eccdc5.js.download" async=""></script><script src="./@a_files/6874-1335ddc9318d7318.js.download" async=""></script><script src="./@a_files/not-found-d2101ad149432efd.js.download" async=""></script><script src="./@a_files/5322-a31cc2ef467c25bd.js.download" async=""></script><script src="./@a_files/8306-ea0440b802e2d283.js.download" async=""></script><script src="./@a_files/540-dc9b94456c69f193.js.download" async=""></script><script src="./@a_files/1100-1ef0397e08238c46.js.download" async=""></script><script src="./@a_files/9349-a0a548d327b13e51.js.download" async=""></script><script src="./@a_files/6990-20968a621a3be1f5.js.download" async=""></script><script src="./@a_files/9677-fb2b81040d185490.js.download" async=""></script><script src="./@a_files/4923-5305854283867663.js.download" async=""></script><script src="./@a_files/6696-314670b005b014c4.js.download" async=""></script><script src="./@a_files/4203-f94d87c0d971cf0c.js.download" async=""></script><script src="./@a_files/8011-a3879efb92aff950.js.download" async=""></script><script src="./@a_files/3720-296af9f08112de30.js.download" async=""></script><script src="./@a_files/4999-ba0083c7801c7207.js.download" async=""></script><script src="./@a_files/page-0e87c26b285ce282.js.download" async=""></script><link rel="preload" href="./@a_files/latest.js.download" as="script"><link rel="preload" href="./@a_files/cursor-effects.js.download" as="script"><link rel="preload" href="./@a_files/api.js.download" as="script"><link rel="apple-touch-icon" sizes="180x180" href="https://assets.guns.lol/favicon/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://assets.guns.lol/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://assets.guns.lol/favicon/favicon-16x16.png"><link rel="manifest" href="https://assets.guns.lol/favicon/site.webmanifest"><meta name="theme-color" content="#ffffff"><link href="./@a_files/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.css" rel="stylesheet"><title>@</title><meta name="description" content="Create feature-rich, customizable and modern link-in-bio pages with guns.lol."><meta name="author" content="@avi | guns.lol"><meta property="og:title" content="@avi | guns.lol"><meta property="og:description" content="Create feature-rich, customizable and modern link-in-bio pages with guns.lol."><meta property="og:image" content="https://og.guns.lol/api/og?username=dotavi&amp;t=1754895919104"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="@avi | guns.lol"><meta name="twitter:description" content="Create feature-rich, customizable and modern link-in-bio pages with guns.lol."><meta name="twitter:image" content="https://og.guns.lol/api/og?username=dotavi&amp;t=1754895919104"><script>document.querySelectorAll('body link[rel="icon"], body link[rel="apple-touch-icon"]').forEach(el => document.head.appendChild(el))</script><script src="./@a_files/polyfills-42372ed130431b0a.js.download" nomodule=""></script><script id="_cursor" src="./@a_files/cursor-effects.js.download"></script><script id="_code">
-        const workerScript = `        
-            import init, { GunsSolver } from 'https://assets.guns.lol/pkg/_gunslolpow.js';
-            self.onmessage = async function (event) {               
-                const { ps, d, c, _n, org_ts } = event.data;
-                await init();
-                const _get_s = new GunsSolver(ps, c, parseInt(d), false, _n);
-                const ts = Math.floor(Date.now() / 1000);
-                const _tsoff = ts - Number(org_ts);
-                const tsp = ts - _tsoff;
-                const _res = await _get_s.solve_pow();    
-                if (_res !== null) {
-                    self.postMessage({ _res, ps, tsp, _n, c });
-                }
-            };
-        `;
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>avi</title>
 
-        const blob = new Blob([workerScript], { type: "application/javascript" });
-        const worker = new Worker(URL.createObjectURL(blob), { type: "module" });
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-        worker.postMessage({
-            ps: '2bfea1249c0de72a68d7b9300588dcb6f173370f483e19a13e8c05cd886',
-            d: '5',
-            c: '6a745b5150e03496eb948538403c277dece98fa6aa5bbf03030e19b083c9eca9',
-            _n: '2qVUoi128xVbj5Vt',
-            org_ts: '1754895919'
-        });
+<style>
+  :root{
+    --bg: #000;
+    --card: #2f2f2f;
+    --card-2: #2b2b2b;
+    --edge: rgba(255,255,255,0.06);
+    --muted: rgba(255,255,255,0.65);
+    --glass: rgba(255,255,255,0.03);
+    --white: #fff;
+    --radius: 22px;
+  }
 
-        worker.onmessage = async function (event) {
-            const { _res, ps, tsp, _n, c } = event.data;
-            if (_res !== undefined) {
-                await getResult(_res);
-            }
-        };
-    </script><link rel="stylesheet" data-font="satoshi" href="https://guns.lol/dotavi"><style data-font="satoshi">
-                body, * {
-                    font-family: 'Satoshi', sans-serif !important;
-                }
-            </style></head><body><div class="n9Jn1x_244378cdd5913f278c3a" style="background-image:url()"></div><audio src="https://r2.guns.lol/4b403b70-d85a-4e93-8824-b0dc3be7efd1.mp3" loop=""></audio><div class="yRVb3w_4ac5c10f247eb261df8a hUNw2Z_90eaf9aaa3c00ed121cd" style="pointer-events: none; display: none;"><div class="tz1elc_dbdc0f63fcf9ce25e8c2" style="font-weight:700;font-size:30px">click to enter...</div></div><script>(self.__next_s=self.__next_s||[]).push(["https://assets.guns.lol/cursor-effects.js",{"id":"_cursor"}])</script><style>
-                ::-moz-selection {
-                    background: #ffffff;
-                    color: #000000;
-                }
-                ::selection {
-                    background: #ffffff;
-                    color: #000000;
-                }
-                </style><div class="sScRLn_e606f195670897bc74a6" style="background-color:#000000"></div><div style="--presenceUsernameColor:#ffffff;--presenceStatusColor:rgba(255, 255, 255, 0.7);--presenceContainerBackground:rgba(255, 255, 255, 0.2);--presenceContainerBorder:2px solid rgba(255, 255, 255, 0.1);--discordServerMembers:rgba(255, 255, 255, 0.6);--secondTabBackground:rgba(255, 255, 255, 0.2);--secondTabBorder:2px solid rgba(255, 255, 255, 0.1);--discordMissingIcon:rgba(255, 255, 255, 0.25);--modernLayoutSeperator:rgba(255, 255, 255, 0.12);--modernLayoutSeperatorBorder:rgba(255, 255, 255, 0.12);--discordAvatarBorder:2px solid rgba(255, 255, 255, 0.15);--badgeContainerBackground:rgba(255, 255, 255, 0.2);--badgeContainerBorder:2px solid rgba(255, 255, 255, 0.04);--userBadge:20.5px;--textColor:#ffffff;--textColorDarker:rgba(255, 255, 255, 0.5);--iconColor:#ffffff;--backgroundColor:#000000;--joinStatus:rgba(255, 255, 255, 0.65);--audioPlayerBar:rgba(255, 255, 255, 0.35);--avatarBorder:2px solid rgba(255, 255, 255, 0.4);--containerColor:rgba(255, 255, 255, 0.21);--containerBlur:10px;--containerRadius:20px;--containerWidth:40rem;--containerPadding:35px 15px;--volumeBackgroundcolor:rgba(255, 255, 255, 0.21);--volumeBorder:2px solid rgba(255, 255, 255, 0.189);--colorUsernameGlow:0px 0px 16.5px #ffffff;--usernameEffects:url(https://assets.guns.lol/sparkle_white.gif);--buttonBackground:rgba(255, 255, 255, 0.22);--buttonBorder:2px solid rgba(255, 255, 255, 0.12);--buttonRadius:12px;--buttonAlign:center;--buttonBackgroundHover:rgba(255, 255, 255, 0.32);--buttonBorderHover:2px solid rgba(255, 255, 255, 0.25);--buttonUrlColor:rgba(255, 255, 255, 0.65);--profileViewsContainerBorder:2px solid rgba(255, 255, 255, 0.16799999999999998);--templatePreviewContainerBackground:rgba(255, 255, 255, 0.4);--platformTextColor:rgba(255, 255, 255, 0.4);--secondTabWidgetDescription:rgba(255, 255, 255, 0.6);--audioIconBackground:rgba(255, 255, 255, 0.2);--progessBarFull:rgba(255, 255, 255, 0.3);--progessBarPlaying:#ffffff;--controlButtonsOther:rgba(255, 255, 255, 0.5);--controlButtonPlaying:#ffffff;--controlTextColor:rgba(255, 255, 255, 0.7);--modernLayoutBottomLeftDivider:rgba(255, 255, 255, 0.14);--sleekLayoutTopRightDivider:rgba(255, 255, 255, 0.14)"><div class="tblzYX_8d25fbd2ec018e7f3333"><div class="uwYFmB_089e78ae7261139e29df"><div class="wbQul1_35f2a4c5b48e5f22cb72" style="position:fixed"><div class="vUb9nx_02af604a2f0bd5f52a08 xYtZVh_85176f7ad5dd05cd2a8a lZ30Rc_13307e85a9f2f85643fd"><div class="fxhYyF_d0dc3a8bbeb8294cbc40"><div></div><div class="sbXTUc_b7ae81993acc636a36eb false"><h1 class="w3lZZc_f8ef53b912061d92eab6 false" style="font-weight:600;font-size:39.5px">avi</h1></div></div><script>(self.__next_s=self.__next_s||[]).push([0,{"children":"\n        const workerScript = `        \n            import init, { GunsSolver } from 'https://assets.guns.lol/pkg/_gunslolpow.js';\n            self.onmessage = async function (event) {               \n                const { ps, d, c, _n, org_ts } = event.data;\n                await init();\n                const _get_s = new GunsSolver(ps, c, parseInt(d), false, _n);\n                const ts = Math.floor(Date.now() / 1000);\n                const _tsoff = ts - Number(org_ts);\n                const tsp = ts - _tsoff;\n                const _res = await _get_s.solve_pow();    \n                if (_res !== null) {\n                    self.postMessage({ _res, ps, tsp, _n, c });\n                }\n            };\n        `;\n\n        const blob = new Blob([workerScript], { type: \"application/javascript\" });\n        const worker = new Worker(URL.createObjectURL(blob), { type: \"module\" });\n\n        worker.postMessage({\n            ps: '2bfea1249c0de72a68d7b9300588dcb6f173370f483e19a13e8c05cd886',\n            d: '5',\n            c: '6a745b5150e03496eb948538403c277dece98fa6aa5bbf03030e19b083c9eca9',\n            _n: '2qVUoi128xVbj5Vt',\n            org_ts: '1754895919'\n        });\n\n        worker.onmessage = async function (event) {\n            const { _res, ps, tsp, _n, c } = event.data;\n            if (_res !== undefined) {\n                await getResult(_res);\n            }\n        };\n    ","id":"_code"}])</script><div class="cf-turnstile" style="display:none" data-sitekey="0x4AAAAAAAgU7T2niLQD-TLm" data-callback="getToken"><div><template shadowrootmode="closed"><iframe src="https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/if/ov2/av0/rcv/5wykj/0x4AAAAAAAgU7T2niLQD-TLm/auto/fbE/new/normal/auto/" allow="cross-origin-isolated; fullscreen; autoplay" sandbox="allow-same-origin allow-scripts allow-popups" id="cf-chl-widget-5wykj" tabindex="-1" title="Widget containing a Cloudflare security challenge" aria-hidden="true" style="border: none; overflow: hidden; width: 0px; height: 0px; position: absolute; visibility: hidden;"></iframe></template><input type="hidden" name="cf-turnstile-response" id="cf-chl-widget-5wykj_response" value="0.SXdWaurGODu8pvjHK7zQVAqopKM0JDxq6OSVIgFIEkq7z1NTLR9Uh5EUcsNiomI76q45d8_vZlXnj1J1XzwbO91tybTD3-HXAqPRV0PZeYBPRZtXo5dn1RheuMtixuVb2MrBU8EIyN_Xergjk4G-k90f6Nqw4PjiB3NLwuyk9uwo-YTDp29bV7kaYBZabPDhqhLR8BZgR4nmhtMKr15FhCDz5Pdao_zD7j_DdlKOsS96X4I5N4ui6Jz-aPyuqXrYeVoZveeZwSx15IMiY9aIGGinKuOI-1oBb3sNyDFCloZyvijUP85YP9FaKKB1ZOemNBjbQRdMwH5uhrpFzpF5SXjWbc_IRWpSvWxgA4NXq5BZHmSOENhLQC4EKLjnxpXL4z8zDK6Xu-Ca0K9knfAWbXb4N36PkT54LV71QX31RCkhoIry88cs7BZoaib0D5E-9KooBb6UoM-1DtSwYmzkTiYQvNJGVfoBakU6JLQtJ8UYsloSPwzlFzRGI19N84kBsfQCzC6MNzlYZnyFiXEnO4h2HaAkjkZaoEZiyv2wzOJpxDuYirI-SYERlifShRurabXB1u8nDlJ3StTBypWs9J9RX9-xjUYbaDz7dj-QB0-XMoYma0_6Sc2ZpUNWVNFC7xK0oLJHxAD8oqwxrSxjC5d8rBBll9HeFSfIKuykx0IH89db0JdGJXSqwv_6XPRxINNQjH8hCiefhv6Xkry1wr9aTmUgEcskCdKwhYFGq8TRCIA3qT1V01TE2u7QI-dUFZx7zMI2PDuBzHaG7E4ELuDFZZg0MfBYi5fGqynWxYU16aC_7bJiUa1knQlXe0l2ntM8xvlHhtnUfScNBHv5YL46sHUDJMLAKoso3Z5h62AFklzALafOttZHR9GrlWWheNKk7tNpgXXPcCq-QYXOEA.bdNbK-v3nN_AuhlstUXFDg.f294ca97fb139d2246675c07ebca8ba37bef7029bda1c7c17ee77a509cb3adfe"></div></div><div class="sBFYOw_599d5ef2ae281840bef2 false" style="bottom:12px;left:15px"><span style="font-weight:550;font-size:14px"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"></path></svg> <!-- -->62</span></div></div><div class="chXycw_813692df6b4f4a4eb22a xYtZVh_85176f7ad5dd05cd2a8a lZ30Rc_13307e85a9f2f85643fd"><img alt="" class="aIO30V_c9f6a4786eb8f48ee761" src="./@a_files/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" style="border-radius: calc(var(--containerRadius) - 10px);"><div class="n3l1m5_518fd466a0bd64cf8ba8"><h1 class="qyUGvl_0ea34e5942a2684da730" style="font-weight: 500; font-size: 17px;">OsamaSon - Congrats</h1><div class="x9BSuX_7d86678db813b7cc4331"><div class="zc51t2_57e8296b6f5a0638cdca"><span style="font-weight: 400; font-size: 16.5px;">0:21</span><div class="w3le1F_14b2d6041f80cf18a61f"><div class="dL32YN_dd99512e7620df62903a"></div><div class="sFNa53_1d2e11770c5462a4dee2" style="width: 21.4335%;"></div></div><span style="font-weight: 400; font-size: 16.5px;">1:39</span></div><div class="bRWtN9_60000601c27cb226b9bc"><span class="zbODVs_3b9ceec9098109f99146"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 6c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1s-1-.45-1-1V7c0-.55.45-1 1-1m3.66 6.82l5.77 4.07c.66.47 1.58-.01 1.58-.82V7.93c0-.81-.91-1.28-1.58-.82l-5.77 4.07a1 1 0 0 0 0 1.64"></path></svg></span><span class="mcYwVu_0f2349f3abab44b28a7d"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2m6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2"></path></svg></span><span class="zbODVs_3b9ceec9098109f99146"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7.58 16.89l5.77-4.07c.56-.4.56-1.24 0-1.63L7.58 7.11C6.91 6.65 6 7.12 6 7.93v8.14c0 .81.91 1.28 1.58.82M16 7v10c0 .55.45 1 1 1s1-.45 1-1V7c0-.55-.45-1-1-1s-1 .45-1 1"></path></svg></span></div></div></div></div></div></div></div></div><!--$--><!--/$--><!--$--><!--/$--><script src="./@a_files/webpack-b34e4bd496496897.js.download" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[69243,[\"7177\",\"static/chunks/app/layout-c453b8d241eccdc5.js\"],\"\"]\n3:I[56496,[\"7177\",\"static/chunks/app/layout-c453b8d241eccdc5.js\"],\"default\"]\n4:I[87555,[],\"\"]\n5:I[31295,[],\"\"]\n6:I[6874,[\"6874\",\"static/chunks/6874-1335ddc9318d7318.js\",\"4345\",\"static/chunks/app/not-found-d2101ad149432efd.js\"],\"\"]\n8:I[59665,[],\"MetadataBoundary\"]\na:I[59665,[],\"OutletBoundary\"]\nd:I[74911,[],\"AsyncMetadataOutlet\"]\nf:I[59665,[],\"ViewportBoundary\"]\n11:I[26614,[],\"\"]\n12:\"$Sreact.suspense\"\n13:I[74911,[],\"AsyncMetadata\"]\n:HL[\"/_next/static/css/ff9399e606869db4.css\",\"style\"]\n:HL[\"/_next/static/css/70796fed0f690c8f.css\",\"style\"]\n:HL[\"/_next/static/css/6054a835c0611161.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"mcncNA1zxw8K9Vm4YcTmy\",\"p\":\"\",\"c\":[\"\",\"dotavi\"],\"i\":false,\"f\":[[[\"\",{\"children\":[[\"username\",\"dotavi\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/ff9399e606869db4.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[[\"$\",\"head\",null,{\"children\":[[\"$\",\"link\",null,{\"href\":\"https://assets.guns.lol/fonts/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.css\",\"rel\":\"stylesheet\"}],[\"$\",\"$L2\",null,{\"src\":\"https://sa.guns.lol/latest.js\",\"id\":\"_sa\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"180x180\",\"href\":\"https://assets.guns.lol/favicon/apple-touch-icon.png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"type\":\"image/png\",\"sizes\":\"32x32\",\"href\":\"https://assets.guns.lol/favicon/favicon-32x32.png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"type\":\"image/png\",\"sizes\":\"16x16\",\"href\":\"https://assets.guns.lol/favicon/favicon-16x16.png\"}],[\"$\",\"link\",null,{\"rel\":\"manifest\",\"href\":\"https://assets.guns.lol/favicon/site.webmanifest\"}]]}],[\"$\",\"body\",null,{\"children\":[[\"$\",\"$L3\",null,{}],[\"$\",\"$L4\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L5\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"div\",null,{\"className\":\"zcXbBy_acae7ef2ade572800706\",\"children\":[\"$\",\"div\",null,{\"className\":\"rnNzIn_2a483bfff065871e1e78\",\"children\":[[\"$\",\"svg\",null,{\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":\"1em\",\"height\":\"1em\",\"viewBox\":\"0 0 24 24\",\"children\":[\"$\",\"path\",null,{\"fill\":\"currentColor\",\"d\":\"M13 2v14.5h-2V2zm-2 17h2.004v2.004H11z\"}]}],[\"$\",\"h1\",null,{\"children\":\"We couldn't find this page.\"}],[\"$\",\"h3\",null,{\"children\":\"The page you are looking for doesn't exist.\"}],[\"$\",\"div\",null,{\"className\":\"pXLlFb_1091dd5bbcca39b5f847\",\"children\":[\"$\",\"$L6\",null,{\"href\":\"/\",\"children\":\"Go Home\"}]}]]}]}],[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/6054a835c0611161.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]]}],{\"children\":[[\"username\",\"dotavi\",\"d\"],[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L4\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L5\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[\"$L7\",[\"$\",\"$L8\",null,{\"children\":\"$L9\"}],[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/70796fed0f690c8f.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/6054a835c0611161.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"$La\",null,{\"children\":[\"$Lb\",\"$Lc\",[\"$\",\"$Ld\",null,{\"promise\":\"$@e\"}]]}]]}],{},null,false]},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$1\",\"kB-0g0X5VEs6HZdzi19wM\",{\"children\":[[\"$\",\"$Lf\",null,{\"children\":\"$L10\"}],null]}],null]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",\"$undefined\"],\"s\":false,\"S\":false}\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"$12\",null,{\"fallback\":null,\"children\":[\"$\",\"$L13\",null,{\"promise\":\"$@14\"}]}]\nc:null\n"])</script><script>self.__next_f.push([1,"15:I[74999,[\"6874\",\"static/chunks/6874-1335ddc9318d7318.js\",\"5322\",\"static/chunks/5322-a31cc2ef467c25bd.js\",\"8306\",\"static/chunks/8306-ea0440b802e2d283.js\",\"540\",\"static/chunks/540-dc9b94456c69f193.js\",\"1100\",\"static/chunks/1100-1ef0397e08238c46.js\",\"9349\",\"static/chunks/9349-a0a548d327b13e51.js\",\"6990\",\"static/chunks/6990-20968a621a3be1f5.js\",\"9677\",\"static/chunks/9677-fb2b81040d185490.js\",\"4923\",\"static/chunks/4923-5305854283867663.js\",\"6696\",\"static/chunks/6696-314670b005b014c4.js\",\"4203\",\"static/chunks/4203-f94d87c0d971cf0c.js\",\"8011\",\"static/chunks/8011-a3879efb92aff950.js\",\"3720\",\"static/chunks/3720-296af9f08112de30.js\",\"4999\",\"static/chunks/4999-ba0083c7801c7207.js\",\"1911\",\"static/chunks/app/%5Busername%5D/page-0e87c26b285ce282.js\"],\"default\"]\n7:[\"$\",\"$L15\",null,{\"data\":{\"_id\":\"686b674927175ee9b6109c33\",\"username\":\"dotavi\",\"account_created\":1751869257,\"verified\":true,\"alias\":\"\",\"config\":{\"description\":\"\",\"color\":\"#ffffff\",\"text_color\":\"#ffffff\",\"bg_color\":\"#000000\",\"icon_color\":\"#ffffff\",\"gradient_1\":\"#ffffff\",\"gradient_2\":\"#636363\",\"profile_gradient\":false,\"presence\":\"disabled\",\"audio\":[{\"url\":\"https://r2.guns.lol/4b403b70-d85a-4e93-8824-b0dc3be7efd1.mp3\",\"title\":\"OsamaSon - Congrats\",\"duration\":\"1:39\",\"selected\":true,\"id\":\"d39d470f-f356-4e35-944e-5821ba607c15\",\"cover\":\"https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp\"}],\"avatar\":\"\",\"custom_cursor\":\"\",\"url\":\"\",\"animated_title\":true,\"monochrome\":true,\"volume_control\":false,\"use_discord_avatar\":false,\"swap_colors\":true,\"social_glow\":true,\"badge_glow\":true,\"display_name\":\"avi\",\"background_effects\":\"none\",\"username_effects\":\"white\",\"shuffle_audios\":false,\"audio_player\":true,\"location\":\"\",\"username_glow\":true,\"discord_avatar_decoration\":false,\"blur\":10,\"opacity\":0.21,\"page_views\":62,\"user_badges\":[],\"custom_badges\":[],\"socials\":[],\"premium\":{\"effects_color\":\"#ffffff\",\"badge_color\":\"#ffffff\",\"border_color\":\"#ffffff\",\"typewriter_enabled\":false,\"typewriter_speed\":5,\"typewriter_delete_speed\":7,\"typewriter\":[],\"hide_views\":false,\"border_enabled\":false,"])</script><script>self.__next_f.push([1,"\"second_tab_enabled\":false,\"monochrome_badges\":false,\"animation\":\"fade\",\"parallax_animation\":false,\"hide_join_date\":false,\"border_width\":2,\"border_radius\":20,\"avatar_radius\":35,\"second_tab\":{},\"cursor_effects\":\"\",\"font\":\"satoshi\",\"page_enter_text\":\"\",\"layout\":\"default\",\"banner\":\"\",\"buttons\":[],\"show_url\":false,\"text_align\":\"center\",\"button_shadow\":false,\"button_border_radius\":12,\"metadata\":{\"title\":\"\",\"description\":\"\",\"image\":\"\",\"favicon\":\"\",\"information_overlay\":false}}},\"premium\":false,\"uid\":816673,\"_C\":\"6a745b5150e03496eb948538403c277dece98fa6aa5bbf03030e19b083c9eca9\",\"_PS\":\"2bfea1249c0de72a68d7b9300588dcb6f173370f483e19a13e8c05cd886\",\"_ts\":1754895919,\"_n\":\"2qVUoi128xVbj5Vt\",\"success\":true}}]\n"])</script><script>self.__next_f.push([1,"14:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"@avi | guns.lol\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Create feature-rich, customizable and modern link-in-bio pages with guns.lol.\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"@avi | guns.lol\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"@avi | guns.lol\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"Create feature-rich, customizable and modern link-in-bio pages with guns.lol.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:image\",\"content\":\"https://og.guns.lol/api/og?username=dotavi\u0026t=1754895919104\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:type\",\"content\":\"website\"}],[\"$\",\"meta\",\"7\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:title\",\"content\":\"@avi | guns.lol\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:description\",\"content\":\"Create feature-rich, customizable and modern link-in-bio pages with guns.lol.\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:image\",\"content\":\"https://og.guns.lol/api/og?username=dotavi\u0026t=1754895919104\"}]],\"error\":null,\"digest\":\"$undefined\"}\ne:{\"metadata\":\"$14:metadata\",\"error\":null,\"digest\":\"$undefined\"}\n10:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}],[\"$\",\"meta\",\"2\",{\"name\":\"theme-color\",\"content\":\"#ffffff\"}]]\nb:null\n"])</script><script defer="" src="./@a_files/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;96d5e245bed44905&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.7.0&quot;,&quot;token&quot;:&quot;2fe24d772b4146c9a06db032d45156c9&quot;}" crossorigin="anonymous"></script>
-<script src="./@a_files/latest.js.download" id="_sa" data-nscript="afterInteractive"></script><script src="./@a_files/api.js.download" id="_turnstile" data-nscript="afterInteractive"></script><next-route-announcer style="position: absolute;"><template shadowrootmode="open"><div aria-live="assertive" id="__next-route-announcer__" role="alert" style="position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;"></div></template></next-route-announcer></body></html>
+  *{box-sizing:border-box}
+  html,body{
+    height:100%;margin:0;
+    background:var(--bg);
+    font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale
+  }
+  .stage{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    padding:36px;
+    position:relative;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(600px 300px at 40% 20%, rgba(255,255,255,0.03), transparent 12%),
+      radial-gradient(500px 200px at 70% 80%, rgba(255,255,255,0.02), transparent 12%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .container{
+    width:min(900px,92%);
+    max-width:1100px;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:center;
+  }
+
+  /* Top card */
+  .card-top{
+    width:900px;
+    max-width:100%;
+    border-radius:28px;
+    background: linear-gradient(180deg, #121212, #222);
+    border:1px solid var(--edge);
+    padding:40px 30px 28px;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    box-shadow: 0 8px 38px rgba(0,0,0,0.7);
+    position:relative;
+    overflow:hidden;
+    backdrop-filter: blur(8px);
+    transition: transform .5s cubic-bezier(.2,.9,.2,1), opacity .5s ease;
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  .card-top.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .card-top::after{
+    content: "";
+    display: none;
+  }
+
+  /* Logo text */
+  .logo-wrap{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    font-weight: 800;
+    color: var(--white);
+    font-size: 38px;
+    letter-spacing: 0.6px;
+    text-shadow: 0 4px 18px rgba(255,255,255,0.08);
+    position: relative;
+    filter: drop-shadow(0 6px 18px rgba(255,255,255,0.04));
+    user-select:none;
+  }
+
+  /* Sparkles */
+  .logo .spark {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.15;
+    box-shadow: 0 0 8px 2px #fff;
+    animation: floaty 3s ease-in-out infinite;
+  }
+  .logo .spark.a { left: 14%; top: 12px; animation-delay: 0s; }
+  .logo .spark.b { left: 50%; top: 4px; animation-delay: 1s; }
+  .logo .spark.c { left: 81%; top: 18px; animation-delay: 2s; }
+  .logo .spark.d { left: 36%; top: 22px; animation-delay: 2.5s; }
+  .logo .spark.e { left: 70%; top: 28px; animation-delay: 1.7s; }
+
+  @keyframes floaty {
+    0% { transform: translateY(-3px) scale(1); opacity: 0.15; }
+    50%{ transform: translateY(3px) scale(0.7); opacity: 0.05; }
+    100%{ transform: translateY(-3px) scale(1); opacity: 0.15; }
+  }
+
+  /* Subtext below avi */
+  .subtext {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.9px;
+    user-select:none;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+  .subtext span {
+    padding: 0 8px;
+    border-left: 1px solid var(--muted);
+    border-right: 1px solid var(--muted);
+  }
+  .subtext span:first-child {
+    border-left: none;
+  }
+  .subtext span:last-child {
+    border-right: none;
+  }
+
+  /* Bottom player card */
+  .card-bot{
+    width:900px;
+    max-width:100%;
+    border-radius:26px;
+    background: linear-gradient(180deg, #121212, #222);
+    border:1px solid var(--edge);
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow: 0 14px 48px rgba(0,0,0,0.85);
+    position:relative;
+    overflow:hidden;
+    backdrop-filter: blur(10px);
+    transition: transform .5s cubic-bezier(.2,.9,.2,1), opacity .5s ease;
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  .card-bot.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .thumb{
+    width:72px; height:72px; border-radius:10px; overflow:hidden; flex:0 0 72px;
+    border:1px solid rgba(255,255,255,0.05);
+    background:#111;
+    box-shadow: 0 8px 24px rgba(255,255,255,0.03) inset;
+  }
+  .thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transform:scale(1);
+    animation: coverZoom 12s ease-in-out infinite alternate;
+    border-radius: 10px;
+  }
+
+  @keyframes coverZoom {
+    to { transform: scale(1.07) }
+  }
+
+  .player-main {
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .title-row {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .title {
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--white);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 68%;
+  }
+  .time {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .progressWrap{
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .progressBar{
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #fff 20%, #ddd 80%);
+    box-shadow: 0 6px 18px rgba(255,255,255,0.3) inset;
+    transition: width .14s linear;
+  }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    justify-content:flex-end;
+  }
+
+  /* White cleaner buttons */
+  .icon-btn, .play-btn{
+    background: rgba(255,255,255,0.08);
+    border: none;
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18);
+    cursor: pointer;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    display: inline-grid;
+    place-items: center;
+    transition:
+      background-color 0.25s cubic-bezier(.4,0,.2,1),
+      box-shadow 0.3s cubic-bezier(.4,0,.2,1),
+      transform 0.18s cubic-bezier(.4,0,.2,1),
+      filter 0.22s cubic-bezier(.4,0,.2,1);
+    user-select:none;
+    opacity: 0.88;
+    filter: blur(0px);
+  }
+  .icon-btn svg, .play-btn svg{
+    stroke: none;
+    fill: var(--white);
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+  .icon-btn:hover, .play-btn:hover {
+    background: rgba(255,255,255,0.16);
+    box-shadow: 0 0 12px 2px rgba(255,255,255,0.22);
+    transform: scale(1.13);
+    opacity: 1;
+    filter: blur(0.5px);
+  }
+  .icon-btn:active, .play-btn:active {
+    transform: scale(0.93);
+    box-shadow: 0 0 6px 1px rgba(255,255,255,0.25);
+    opacity: 0.7;
+    filter: blur(0.7px);
+  }
+  /* Play button bigger */
+  .play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  /* small subtle text under player (duration) */
+  .meta {
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+
+  /* click to enter overlay */
+  .overlay{
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.9);
+    z-index: 10;
+    cursor: pointer;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    font-size: 24px;
+    text-transform: lowercase;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+    user-select:none;
+  }
+  .overlay.smallhint{
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  /* responsiveness */
+  @media (max-width:720px){
+    .card-top, .card-bot{
+      padding: 18px;
+      border-radius: 18px;
+    }
+    .thumb{
+      width: 58px;
+      height: 58px;
+    }
+    .title{
+      font-size: 15px;
+      max-width: 48%;
+    }
+    .logo{
+      font-size: 28px;
+    }
+  }
+  .socials-row {
+    display: flex;
+    gap: 18px;
+    margin-top: 18px;
+    justify-content: center;
+    align-items: center;
+  }
+  .social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.22s cubic-bezier(.4,0,.2,1), filter 0.22s cubic-bezier(.4,0,.2,1);
+    filter: drop-shadow(0 0 2px #fff6);
+  }
+  .social-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: #fff;
+    filter: drop-shadow(0 0 2px #fff6);
+    opacity: 0.92;
+    transition: filter 0.22s cubic-bezier(.4,0,.2,1), opacity 0.22s cubic-bezier(.4,0,.2,1);
+  }
+  .social-icon:hover, .social-icon:focus {
+    transform: translateY(-5px) scale(1.08);
+    filter: drop-shadow(0 0 6px #fff7);
+    outline: none;
+  }
+  .social-icon:active {
+    transform: translateY(-2px) scale(0.97);
+    opacity: 0.7;
+  }
+  .copied-msg {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30,30,30,0.95);
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
+    z-index: 2;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .copied-msg.visible {
+    opacity: 1;
+  }
+  .btc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 2px #fff6);
+    opacity: 0.92;
+    transition: filter 0.22s cubic-bezier(.4,0,.2,1), opacity 0.22s cubic-bezier(.4,0,.2,1);
+    border-radius: 50%;
+    background: none;
+    display: block;
+  }
+  .social-icon:hover .btc-img, .social-icon:focus .btc-img {
+    filter: drop-shadow(0 0 6px #fff7);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" role="main" aria-label="avi player">
+  <div class="container">
+
+    <!-- top card -->
+    <div class="card-top" id="topCard" aria-hidden="false">
+      <div class="logo-wrap" aria-hidden="true">
+        <div class="logo" id="logoText">avi
+          <span class="spark a"></span>
+          <span class="spark b"></span>
+          <span class="spark c"></span>
+          <span class="spark d"></span>
+          <span class="spark e"></span>
+        </div>
+        <div class="subtext" aria-hidden="true">
+          <span>dev</span>
+          <span>caller</span>
+          <span>poor</span>
+          <span>siteowner</span>
+        </div>
+        <div class="socials-row">
+          <div class="social-icon" id="discordBtn" aria-label="Copy Discord username" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M20.317 4.369A19.791 19.791 0 0 0 16.885 3.2a.112.112 0 0 0-.119.056c-.524.908-.99 1.867-1.361 2.723a18.524 18.524 0 0 0-5.03 0A12.76 12.76 0 0 0 8.01 3.257a.115.115 0 0 0-.119-.057A19.736 19.736 0 0 0 3.683 4.369a.105.105 0 0 0-.047.041C.533 9.09-.32 13.579.099 18.021a.116.116 0 0 0 .045.081c2.053 1.507 4.042 2.422 5.993 3.029a.112.112 0 0 0 .123-.041c.462-.63.874-1.295 1.226-1.994a.112.112 0 0 0-.061-.155c-.652-.247-1.27-.548-1.872-.892a.112.112 0 0 1-.011-.188c.126-.094.252-.192.372-.291a.112.112 0 0 1 .114-.013c3.927 1.793 8.18 1.793 12.061 0a.112.112 0 0 1 .115.012c.12.099.246.197.372.291a.112.112 0 0 1-.01.188 12.298 12.298 0 0 1-1.873.892.112.112 0 0 0-.06.156c.36.698.773 1.362 1.225 1.993a.112.112 0 0 0 .123.041c1.951-.607 3.94-1.522 5.993-3.029a.115.115 0 0 0 .045-.081c.5-5.177-.838-9.637-3.267-13.611a.104.104 0 0 0-.047-.041zM8.02 15.331c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.174 1.095 2.156 2.418 0 1.334-.955 2.419-2.156 2.419zm7.974 0c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.174 1.095 2.156 2.418 0 1.334-.946 2.419-2.156 2.419z"/></svg>
+            <span class="copied-msg" id="discordCopied">Copied!</span>
+          </div>
+          <div class="social-icon" id="btcBtn" aria-label="Copy Bitcoin address" tabindex="0">
+            <img src="https://raw.githubusercontent.com/elikb06/clothingbrand/refs/heads/main/Daco_47168.png" alt="Bitcoin logo" class="btc-img"/>
+            <span class="copied-msg" id="btcCopied">Copied!</span>
+          </div>
+          <div class="social-icon" id="tgBtn" aria-label="Open Telegram" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom player card -->
+    <div class="card-bot" id="playerCard" aria-hidden="true">
+      <div class="thumb" aria-hidden="true">
+        <img src="https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" alt="Player thumbnail"/>
+      </div>
+      <div class="player-main">
+        <div class="title-row">
+          <div class="title" style="font-size:16px; font-weight:600; color:var(--white);">OsamaSon - Congrats</div>
+        </div>
+        <div class="progress-section" style="display:flex; align-items:center; gap:12px;">
+          <div class="time" id="currentTime">0:00</div>
+          <div class="progressWrap" aria-label="Playback progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="flex:1; margin:0 8px;">
+            <div class="progressBar"></div>
+          </div>
+          <div class="time" id="duration">1:39</div>
+        </div>
+      </div>
+      <div class="controls" style="margin-left:18px;">
+        <button class="icon-btn" id="backBtn" aria-label="Previous track">
+          <svg viewBox="0 0 24 24"><path d="M16.5 19V5a1 1 0 0 0-1.6-.8l-8.2 7a1 1 0 0 0 0 1.6l8.2 7a1 1 0 0 0 1.6-.8z"/></svg>
+        </button>
+        <button class="play-btn" id="playBtn" aria-label="Play">
+          <svg viewBox="0 0 24 24">
+            <polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="nextBtn" aria-label="Next track">
+          <svg viewBox="0 0 24 24"><path d="M7.5 5v14a1 1 0 0 0 1.6.8l8.2-7a1 1 0 0 0 0-1.6l-8.2-7A1 1 0 0 0 7.5 5z"/></svg>
+        </button>
+      </div>
+      <audio id="audio" src="https://r2.guns.lol/4b403b70-d85a-4e93-8824-b0dc3be7efd1.mp3" preload="auto" style="display:none;"></audio>
+    </div>
+
+  </div>
+
+  <!-- fade overlay -->
+  <div class="overlay" id="overlay" role="button" tabindex="0" aria-label="Click to enter">click to enter</div>
+</div>
+
+<script>
+  const overlay = document.getElementById('overlay');
+  const topCard = document.getElementById('topCard');
+  const playerCard = document.getElementById('playerCard');
+  const playBtn = document.getElementById('playBtn');
+  const progressBar = document.querySelector('.progressBar');
+  const audio = document.getElementById('audio');
+  const currentTimeEl = document.getElementById('currentTime');
+  const durationEl = document.getElementById('duration');
+  const playPauseIcon = document.getElementById('playPauseIcon');
+
+  // Show fade-in lift on cards after entering
+  function showCards() {
+    topCard.classList.add('visible');
+    playerCard.classList.add('visible');
+  }
+
+  // Fade overlay on click
+  overlay.addEventListener('click', () => {
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    showCards();
+    audio.play();
+  });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      overlay.click();
+    }
+  });
+
+  // Play button toggle and audio control
+  let isPlaying = false;
+  playBtn.addEventListener('click', () => {
+    if (!isPlaying) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener('play', () => {
+    isPlaying = true;
+    playBtn.setAttribute('aria-label', 'Pause');
+    // Modern pause icon: two rounded rects
+    playPauseIcon.setAttribute('points', '');
+    playPauseIcon.outerHTML = '<rect id="playPauseIcon" x="8" y="5" width="3.5" height="14" rx="1.2"/><rect id="playPauseIcon2" x="13" y="5" width="3.5" height="14" rx="1.2"/>';
+  });
+  audio.addEventListener('pause', () => {
+    isPlaying = false;
+    playBtn.setAttribute('aria-label', 'Play');
+    // Modern play icon
+    const svg = playBtn.querySelector('svg');
+    svg.innerHTML = '<polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>';
+  });
+
+  // Progress bar and time update
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+  audio.addEventListener('timeupdate', () => {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = percent + '%';
+    currentTimeEl.textContent = formatTime(audio.currentTime);
+  });
+  audio.addEventListener('loadedmetadata', () => {
+    durationEl.textContent = formatTime(audio.duration);
+  });
+  // Seek on progress bar click
+  document.querySelector('.progressWrap').addEventListener('click', (e) => {
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+    audio.currentTime = percent * audio.duration;
+  });
+
+  // Socials button actions
+  document.getElementById('tgBtn').addEventListener('click', () => {
+    window.open('https://t.me/yourtelegram', '_blank');
+  });
+  document.getElementById('discordBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('dotavii');
+    const msg = document.getElementById('discordCopied');
+    msg.classList.add('visible');
+    setTimeout(() => msg.classList.remove('visible'), 1100);
+  });
+  document.getElementById('btcBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('bc1qexampleaddress1234567890');
+    const msg = document.getElementById('btcCopied');
+    msg.classList.add('visible');
+    setTimeout(() => msg.classList.remove('visible'), 1100);
+  });
+</script>
+
+</body>
+</html>
