@@ -332,56 +332,53 @@
   }
 
   /* responsiveness */
-  @media (max-width:720px){
-    .card-top, .card-bot{
-      padding: 18px;
-      border-radius: 18px;
-    }
-    .thumb{
-      width: 58px;
-      height: 58px;
-    }
-    .title{
-      font-size: 15px;
-      max-width: 48%;
-    }
-    .logo{
-      font-size: 28px;
-    }
-    .card-bot {
-      flex-direction: column;
-      align-items: stretch;
-      text-align: center;
-    }
-    .controls {
-      justify-content: center;
-      margin-left: 0 !important;
-    }
-    .title-row {
-      flex-direction: column;
-      gap: 4px;
-    }
+@media (max-width:720px){
+  .card-top, .card-bot{
+    padding: 14px;
+    border-radius: 18px;
   }
-  @media (max-width:480px){
-    .stage {
-      padding: 18px;
-    }
-    .subtext {
-      font-size: 12px;
-    }
-    .title {
-      font-size: 14px;
-      max-width: 100%;
-    }
-    .progress-section {
-      flex-direction: column;
-      gap: 6px !important;
-    }
-    .controls {
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+  .thumb{
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
   }
+  .title{
+    font-size: 15px;
+    max-width: 55%;
+  }
+  .logo{
+    font-size: 28px;
+  }
+  .controls {
+    gap: 10px;
+  }
+  .icon-btn, .play-btn {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width:480px){
+  .stage {
+    padding: 16px;
+  }
+  .subtext {
+    font-size: 12px;
+    gap: 10px;
+  }
+  .title {
+    font-size: 14px;
+    max-width: 50%;
+  }
+  .progress-section {
+    gap: 8px;
+  }
+  .controls {
+    gap: 8px;
+  }
+  .icon-btn, .play-btn {
+    transform: scale(0.85);
+  }
+}
   .socials-row {
     display: flex;
     gap: 18px;
