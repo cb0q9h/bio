@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>avi</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="path/to/your-icon.ico" type="image/x-icon" />
+  <title>@avi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
 <style>
   :root{
@@ -622,6 +624,16 @@
     msg.classList.add('visible');
     setTimeout(() => msg.classList.remove('visible'), 1100);
   });
+
+  function typeWriterTitle() {
+  if (titleIndex <= titleText.length) {
+    document.title = titleText.substring(0, titleIndex);
+    titleIndex++;
+    setTimeout(typeWriterTitle, 120); // Adjust typing speed here
+  }
+}
+
+typeWriterTitle();
 </script>
 
 </body>
