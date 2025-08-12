@@ -357,6 +357,12 @@
   .icon-btn, .play-btn {
     transform: scale(0.9);
   }
+  .progressWrap {
+    height: 7px;
+  }
+  .progressBar {
+    height: 100%;
+  }
 }
 
 @media (max-width:480px){
@@ -379,6 +385,12 @@
   }
   .icon-btn, .play-btn {
     transform: scale(0.85);
+  }
+  .progressWrap {
+    height: 7px;
+  }
+  .progressBar {
+    height: 100%;
   }
 }
   .socials-row {
@@ -407,6 +419,11 @@
     filter: drop-shadow(0 0 2px #fff6);
     opacity: 0.92;
     transition: filter 0.22s cubic-bezier(.4,0,.2,1), opacity 0.22s cubic-bezier(.4,0,.2,1);
+  }
+  .social-icon#tgBtn svg {
+    width: 110%;
+    height: 110%;
+    transform: translateY(1px);
   }
   .social-icon:hover, .social-icon:focus {
     transform: translateY(-5px) scale(1.08);
