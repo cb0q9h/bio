@@ -138,6 +138,7 @@
     gap: 16px;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
   }
   .subtext span {
     padding: 0 8px;
@@ -347,6 +348,39 @@
     .logo{
       font-size: 28px;
     }
+    .card-bot {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+    .controls {
+      justify-content: center;
+      margin-left: 0 !important;
+    }
+    .title-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+  @media (max-width:480px){
+    .stage {
+      padding: 18px;
+    }
+    .subtext {
+      font-size: 12px;
+    }
+    .title {
+      font-size: 14px;
+      max-width: 100%;
+    }
+    .progress-section {
+      flex-direction: column;
+      gap: 6px !important;
+    }
+    .controls {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
   }
   .socials-row {
     display: flex;
@@ -354,6 +388,7 @@
     margin-top: 18px;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
   }
   .social-icon {
     display: flex;
