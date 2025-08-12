@@ -625,15 +625,22 @@
     setTimeout(() => msg.classList.remove('visible'), 1100);
   });
 
-  function typeWriterTitle() {
-  if (titleIndex <= titleText.length) {
-    document.title = titleText.substring(0, titleIndex);
-    titleIndex++;
-    setTimeout(typeWriterTitle, 120); // Adjust typing speed here
-  }
-}
+  const text = "Your Tab Title Here";
+  let index = 0;
 
-typeWriterTitle();
+  function typeWriter() {
+    if (index <= text.length) {
+      document.title = text.substring(0, index);
+      index++;
+      setTimeout(typeWriter, 200); // typing speed in milliseconds
+    } else {
+      // Optionally, reset and loop
+      index = 0;
+      setTimeout(typeWriter, 2000); // pause before restarting
+    }
+  }
+
+  typeWriter();
 </script>
 
 </body>
