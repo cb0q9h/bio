@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="https://raw.githubusercontent.com/elikb06/bio/refs/heads/main/iconn.ico" type="image/x-icon" />
+  <link rel="icon" href="https://raw.githubusercontent.com/cb0q9h/bio/refs/heads/main/iconn.ico" type="image/x-icon" />
   <title>@avi</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -60,7 +60,6 @@
     align-items:center;
   }
 
-  /* Top card */
   .card-top{
     width:900px;
     max-width:100%;
@@ -88,7 +87,6 @@
     display: none;
   }
 
-  /* Logo text */
   .logo-wrap{
     display:flex;
     flex-direction: column;
@@ -106,7 +104,6 @@
     user-select:none;
   }
 
-  /* Sparkles */
   .logo .spark {
     position: absolute;
     width: 6px;
@@ -129,7 +126,6 @@
     100%{ transform: translateY(-3px) scale(1); opacity: 0.15; }
   }
 
-  /* Subtext below avi */
   .subtext {
     color: var(--muted);
     font-weight: 600;
@@ -154,7 +150,6 @@
     border-right: none;
   }
 
-  /* Bottom player card */
   .card-bot{
     width:900px;
     max-width:100%;
@@ -250,7 +245,6 @@
     justify-content:flex-end;
   }
 
-  /* White cleaner buttons */
   .icon-btn, .play-btn{
     background: rgba(255,255,255,0.08);
     border: none;
@@ -290,14 +284,12 @@
     opacity: 0.7;
     filter: blur(0.7px);
   }
-  /* Play button bigger */
   .play-btn {
     width: 44px;
     height: 44px;
     border-radius: 12px;
   }
 
-  /* small subtle text under player (duration) */
   .meta {
     color: var(--muted);
     font-size: 13px;
@@ -308,7 +300,6 @@
     margin-top: 6px;
   }
 
-  /* click to enter overlay */
   .overlay{
     position: fixed;
     inset: 0;
@@ -333,7 +324,6 @@
     letter-spacing: 0.3px;
   }
 
-  /* responsiveness */
 @media (max-width:720px){
   .card-top, .card-bot{
     padding: 14px;
@@ -476,7 +466,6 @@
 <div class="stage" role="main" aria-label="avi player">
   <div class="container">
 
-    <!-- top card -->
     <div class="card-top" id="topCard" aria-hidden="false">
       <div class="logo-wrap" aria-hidden="true">
         <div class="logo" id="logoText">avi
@@ -508,7 +497,6 @@
       </div>
     </div>
 
-    <!-- bottom player card -->
     <div class="card-bot" id="playerCard" aria-hidden="true">
       <div class="thumb" aria-hidden="true">
         <img src="https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" alt="Player thumbnail"/>
@@ -543,7 +531,6 @@
 
   </div>
 
-  <!-- fade overlay -->
   <div class="overlay" id="overlay" role="button" tabindex="0" aria-label="Click to enter">click to enter</div>
 </div>
 
@@ -558,13 +545,11 @@
   const durationEl = document.getElementById('duration');
   const playPauseIcon = document.getElementById('playPauseIcon');
 
-  // Show fade-in lift on cards after entering
   function showCards() {
     topCard.classList.add('visible');
     playerCard.classList.add('visible');
   }
 
-  // Fade overlay on click
   overlay.addEventListener('click', () => {
     overlay.style.opacity = '0';
     overlay.style.pointerEvents = 'none';
@@ -578,7 +563,6 @@
     }
   });
 
-  // Play button toggle and audio control
   let isPlaying = false;
   playBtn.addEventListener('click', () => {
     if (!isPlaying) {
@@ -591,19 +575,16 @@
   audio.addEventListener('play', () => {
     isPlaying = true;
     playBtn.setAttribute('aria-label', 'Pause');
-    // Modern pause icon: two rounded rects
     playPauseIcon.setAttribute('points', '');
     playPauseIcon.outerHTML = '<rect id="playPauseIcon" x="8" y="5" width="3.5" height="14" rx="1.2"/><rect id="playPauseIcon2" x="13" y="5" width="3.5" height="14" rx="1.2"/>';
   });
   audio.addEventListener('pause', () => {
     isPlaying = false;
     playBtn.setAttribute('aria-label', 'Play');
-    // Modern play icon
     const svg = playBtn.querySelector('svg');
     svg.innerHTML = '<polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>';
   });
 
-  // Progress bar and time update
   function formatTime(sec) {
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
@@ -617,7 +598,6 @@
   audio.addEventListener('loadedmetadata', () => {
     durationEl.textContent = formatTime(audio.duration);
   });
-  // Seek on progress bar click
   document.querySelector('.progressWrap').addEventListener('click', (e) => {
     const rect = e.target.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -625,18 +605,17 @@
     audio.currentTime = percent * audio.duration;
   });
 
-  // Socials button actions
   document.getElementById('tgBtn').addEventListener('click', () => {
     window.open('https://t.me/x0xr0', '_blank');
   });
   document.getElementById('discordBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText('dotavii');
+    navigator.clipboard.writeText('rxckbs');
     const msg = document.getElementById('discordCopied');
     msg.classList.add('visible');
     setTimeout(() => msg.classList.remove('visible'), 1100);
   });
   document.getElementById('btcBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText('bc1q53lrmaa9ezp8xp7cwlsnkejr660nqn7rhkqdjd');
+    navigator.clipboard.writeText('199boji2LWifjaW7K22mKszZiQnLsJqNBP');
     const msg = document.getElementById('btcCopied');
     msg.classList.add('visible');
     setTimeout(() => msg.classList.remove('visible'), 1100);
@@ -649,11 +628,11 @@
     if (index <= text.length) {
       document.title = text.substring(0, index);
       index++;
-      setTimeout(typeWriter, 200); // typing speed in milliseconds
+      setTimeout(typeWriter, 200); 
     } else {
-      // Optionally, reset and loop
+
       index = 0;
-      setTimeout(typeWriter, 2000); // pause before restarting
+      setTimeout(typeWriter, 2000);
     }
   }
 
