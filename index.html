@@ -168,12 +168,6 @@
     /* ===== VISUALIZER CANVAS ===== */
     #viz{position:absolute;inset:0;z-index:0;opacity:.18;mix-blend:screen;pointer-events:none}
 
-    /* cursor particle trail */
-    #trail{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.22;mix-blend:screen}
-
-    /* spotlight that follows mouse (white only to keep palette) */
-    .spot{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(320px 220px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.06), transparent 60%)}
-
     /* ===== RESPONSIVE ===== */
     @media (max-width:720px){
       .card-top,.card-bot{padding:16px;border-radius:18px}
@@ -192,9 +186,6 @@
       .icon-btn,.play-btn{transform:scale(.88)}
       .progressWrap{height:8px}
     }
-      .play-btn.ripple::after{content:"";position:absolute;inset:-6px;border-radius:14px;background:radial-gradient(220px 180px at var(--rx,50%) var(--ry,50%), rgba(255,255,255,.18), rgba(255,255,255,0) 60%);opacity:.0;transition:opacity .35s ease}
-    .play-btn.ripple.active::after{opacity:.5}
-      .play-btn{ position: relative; overflow: hidden; }
   </style>
 </head>
 <body>
@@ -203,8 +194,6 @@
 
   <div class="stage" role="main" aria-label="avi player">
     <canvas id="viz"></canvas>
-    <canvas id="trail"></canvas>
-    <div class="spot" aria-hidden="true"></div>
     <div class="container" id="tiltContainer">
 
       <div class="card-top" id="topCard" aria-hidden="false">
@@ -252,11 +241,17 @@
             <div class="time" id="duration">1:39</div>
           </div>
         </div>
-        <div class="controls" style="margin-left:18px;justify-content:center;width:140px;">
+        <div class="controls" style="margin-left:18px;">
+          <button class="icon-btn" id="backBtn" aria-label="Previous track">
+            <svg viewBox="0 0 24 24"><path d="M16.5 19V5a1 1 0 0 0-1.6-.8l-8.2 7a1 1 0 0 0 0 1.6l8.2 7a1 1 0 0 0 1.6-.8z"/></svg>
+          </button>
           <button class="play-btn" id="playBtn" aria-label="Play">
             <svg viewBox="0 0 24 24">
               <polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>
             </svg>
+          </button>
+          <button class="icon-btn" id="nextBtn" aria-label="Next track">
+            <svg viewBox="0 0 24 24"><path d="M7.5 5v14a1 1 0 0 0 1.6.8l8.2-7a1 1 0 0 0 0-1.6l-8.2-7A1 1 0 0 0 7.5 5z"/></svg>
           </button>
         </div>
         <audio id="audio" src="https://files.catbox.moe/jtf75p.mp3" preload="auto" style="display:none;"></audio>
@@ -278,11 +273,97 @@
     const durationEl = document.getElementById('duration');
     const viz = document.getElementById('viz');
     const ctx = viz.getContext('2d');
-    // trail canvas already initialized above
-    function resizeCanvas(){
-      viz.width = viz.clientWidth; viz.height = viz.clientHeight;
-      trail.width = trail.clientWidth; trail.height = trail.clientHeight;
+
+    function showCards() {
+      topCard.classList.add('visible');
+      playerCard.classList.add('visible');
     }
+
+    // overlay enter
+    overlay.addEventListener('click', () => {
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      showCards();
+      audio.play();
+    });
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); overlay.click();
+      }
+    });
+
+    // keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if(e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if(e.code === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+      if(e.code === 'ArrowRight') audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+    });
+
+    // play/pause
+    let isPlaying = false;
+    function togglePlay(){ isPlaying ? audio.pause() : audio.play(); }
+    playBtn.addEventListener('click', togglePlay);
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      playBtn.setAttribute('aria-label', 'Pause');
+      playBtn.querySelector('svg').innerHTML = '<rect x="8" y="5" width="3.5" height="14" rx="1.2"/><rect x="13" y="5" width="3.5" height="14" rx="1.2"/>';
+    });
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      playBtn.setAttribute('aria-label', 'Play');
+      playBtn.querySelector('svg').innerHTML = '<polygon points="6 4 20 12 6 20 6 4"/>';
+    });
+
+    function formatTime(sec){ const m = Math.floor(sec/60); const s = Math.floor(sec%60); return `${m}:${s.toString().padStart(2,'0')}` }
+    audio.addEventListener('timeupdate', () => {
+      const pct = (audio.currentTime / audio.duration) * 100; progressBar.style.width = pct + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+    audio.addEventListener('loadedmetadata', () => { durationEl.textContent = formatTime(audio.duration); resizeCanvas(); });
+    document.querySelector('.progressWrap').addEventListener('click', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left; const percent = x / rect.width; audio.currentTime = percent * audio.duration;
+    });
+
+    // socials
+    document.getElementById('tgBtn').addEventListener('click', () => { window.open('https://t.me/cblarper', '_blank'); });
+    const discordBtn = document.getElementById('discordBtn');
+    discordBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText('rxckbs');
+      const msg = document.getElementById('discordCopied'); msg.classList.add('visible'); setTimeout(()=>msg.classList.remove('visible'),1100);
+    });
+
+    // tilt / parallax
+    const tiltContainer = document.getElementById('tiltContainer');
+    const cards = [topCard, playerCard];
+    function parallax(e){
+      const rect = tiltContainer.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      cards.forEach((el,i)=>{
+        const depth = i ? 10 : 14; // different depth per card
+        el.style.transform = `rotateX(${(-y*depth)}deg) rotateY(${(x*depth)}deg) translateZ(0)`;
+      });
+    }
+    tiltContainer.addEventListener('mousemove', parallax);
+    tiltContainer.addEventListener('mouseleave', ()=> cards.forEach(el=> el.style.transform=''));
+
+    // title typewriter loop
+    (function typewriter(){
+      const text = "@avi"; let index = 0; function step(){
+        if(index <= text.length){ document.title = text.substring(0,index); index++; setTimeout(step, 200); }
+        else { index = 0; setTimeout(step, 1600); }
+      } step();
+    })();
+
+    // ===== Audio Visualizer (bars) =====
+    let analyser, dataArray, raf;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(audio);
+    analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; const bufferLength = analyser.frequencyBinCount; dataArray = new Uint8Array(bufferLength);
+    source.connect(analyser); analyser.connect(audioCtx.destination);
+
+    function resizeCanvas(){ viz.width = viz.clientWidth; viz.height = viz.clientHeight; }
     window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
     function draw(){
@@ -319,60 +400,6 @@
     audio.addEventListener('play', () => { audioCtx.resume(); cancelAnimationFrame(raf); draw(); });
     audio.addEventListener('pause', () => cancelAnimationFrame(raf));
 
-      // ===== Cursor spotlight coords =====
-    const spot = document.querySelector('.spot');
-    document.addEventListener('mousemove', (e)=>{
-      spot.style.setProperty('--mx', e.clientX+'px');
-      spot.style.setProperty('--my', e.clientY+'px');
-    });
-
-    // ===== Particle Trail =====
-    const trail = document.getElementById('trail');
-    const tctx = trail.getContext('2d');
-    let particles = [];
-    const MAX_P = 140;
-    function addParticle(x,y){
-      particles.push({x,y, vx:(Math.random()-.5)*0.7, vy:(Math.random()-.5)*0.7, a:1, r:2+Math.random()*2});
-      if(particles.length>MAX_P) particles.shift();
-    }
-    document.addEventListener('mousemove', (e)=>{
-      const rect = trail.getBoundingClientRect();
-      addParticle(e.clientX-rect.left, e.clientY-rect.top);
-    });
-    function drawTrail(){
-      tctx.clearRect(0,0,trail.width,trail.height);
-      for(let p of particles){
-        p.x+=p.vx; p.y+=p.vy; p.a*=0.96; p.r*=0.995;
-        tctx.beginPath(); tctx.arc(p.x,p.y,Math.max(0.5,p.r),0,Math.PI*2);
-        tctx.fillStyle = `rgba(255,255,255,${0.55*p.a})`; tctx.fill();
-        tctx.shadowColor='rgba(255,255,255,0.6)'; tctx.shadowBlur=8;
-      }
-      requestAnimationFrame(drawTrail);
-    }
-    drawTrail();
-
-    // ===== Magnetic Play Button + Ripple =====
-    const pb = document.getElementById('playBtn');
-    const magnet = (e)=>{
-      const rect = pb.getBoundingClientRect();
-      const mx = e.clientX - (rect.left + rect.width/2);
-      const my = e.clientY - (rect.top + rect.height/2);
-      const dist = Math.hypot(mx,my);
-      const pull = Math.max(0, 1 - Math.min(dist/220,1));
-      pb.style.transform = `translate(${mx*0.12*pull}px, ${my*0.12*pull}px) scale(${1.02 + 0.06*pull})`;
-    };
-    document.addEventListener('mousemove', magnet);
-    pb.addEventListener('mouseleave', ()=>{ pb.style.transform=''; });
-    pb.classList.add('ripple');
-    pb.addEventListener('click', (e)=>{
-      const rect = pb.getBoundingClientRect();
-      pb.style.setProperty('--rx', ((e.clientX-rect.left)/rect.width*100)+'%');
-      pb.style.setProperty('--ry', ((e.clientY-rect.top)/rect.height*100)+'%');
-      pb.classList.add('active'); setTimeout(()=>pb.classList.remove('active'), 280);
-    });
-
   </script>
-</body>
-</html>
 </body>
 </html>
