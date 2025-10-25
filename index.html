@@ -3,191 +3,376 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>@avi — VFX</title>
   <link rel="icon" href="https://raw.githubusercontent.com/cb0q9h/bio/refs/heads/main/iconn.ico" type="image/x-icon" />
+  <title>@avi</title>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg: #040404;
-      --card: #121212;
-      --muted: rgba(255,255,255,0.65);
+      --bg: #000;
+      --card: #2f2f2f;
+      --card-2: #2b2b2b;
       --edge: rgba(255,255,255,0.06);
-      --white: #ffffff;
-      --accent: 220 90% 60%; /* hsl for nice glow */
+      --muted: rgba(255,255,255,0.65);
       --glass: rgba(255,255,255,0.03);
-      --radius: 20px;
+      --white: #fff;
+      --radius: 22px;
     }
+
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.02), transparent 12%), radial-gradient(900px 400px at 90% 90%, rgba(255,255,255,0.02), transparent 12%), var(--bg);font-family:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--white);-webkit-font-smoothing:antialiased}
+    html,body{
+      height:100%;margin:0;
+      background:var(--bg);
+      font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale
+    }
 
-    /* stage layout */
-    .stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;overflow:hidden}
+    .stage{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      padding:36px;
+      position:relative;
+      overflow:hidden;
+      perspective:1200px;
+    }
+    .stage::before{
+      content:"";position:absolute;inset:-20% -30%;z-index:0;pointer-events:none;
+      background: conic-gradient(from 0deg at 30% 40%, rgba(255,255,255,.06), transparent 20%),
+                  radial-gradient(60% 45% at 70% 70%, rgba(255,255,255,.05), transparent 60%),
+                  radial-gradient(40% 25% at 20% 15%, rgba(255,255,255,.04), transparent 70%);
+      filter: blur(18px) saturate(120%);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+    @keyframes drift{to{transform:translate3d(-4%,2%,0) rotate(1deg)}}
 
-    /* volumetric light + starfield */
-    .bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.08;mix-blend:screen;
+      background-image: repeating-linear-gradient( to bottom, #fff0 0px, #fff0 2px, #fff1 3px, #fff0 4px );
+      animation: sl 6s linear infinite;
+    }
+    @keyframes sl{from{background-position:0 0} to{background-position:0 100%}}
 
-    /* container */
-    .container{width:min(980px,96%);max-width:1200px;z-index:5;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+    .grain{position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:.06;mix-blend:soft-light;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.35"/></svg>');
+      animation: grain 1.6s steps(2,end) infinite;
+    }
+    @keyframes grain{to{transform:translate3d(-3%,2%,0)}}
 
-    /* top hero card */
-    .hero{border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--edge);padding:36px;display:flex;gap:20px;align-items:center;backdrop-filter: blur(8px) saturate(120%);box-shadow:0 30px 80px rgba(0,0,0,0.7)}
+    .container{width:min(900px,92%);max-width:1100px;z-index:1;display:flex;flex-direction:column;gap:18px;align-items:center}
 
-    .left{width:92px;flex-shrink:0}
-    .avatar{width:92px;height:92px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(135deg,#111,#222);display:flex;align-items:center;justify-content:center}
-    .avatar img{width:110%;height:110%;object-fit:cover;transform:scale(1.02);filter:contrast(1.02)}
+    .card-top{
+      width:900px;max-width:100%;border-radius:28px;
+      background: linear-gradient(180deg, #121212, #222);
+      border:1px solid var(--edge);
+      padding:44px 30px 28px;display:flex;flex-direction: column;align-items:center;
+      box-shadow: 0 12px 52px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+      position:relative;overflow:hidden;backdrop-filter: blur(10px);
+      transform: translate3d(0,18px,0) rotateX(6deg);opacity: 0;
+      transition: transform .8s cubic-bezier(.2,.9,.2,1), opacity .8s ease;
+      will-change: transform;
+      isolation:isolate;
+    }
+    .card-top.visible{transform:translate3d(0,0,0) rotateX(0deg);opacity:1}
 
-    .meta{display:flex;flex-direction:column;gap:6px}
-    .title{font-weight:800;font-size:28px}
-    .subtitle{color:var(--muted);font-weight:600;letter-spacing:0.6px}
+    .card-top::after{
+      content:"";position:absolute;inset:-2px;border-radius:30px;pointer-events:none;z-index:-1;
+      background: conic-gradient(from 0deg, rgba(255,255,255,.14), rgba(255,255,255,0) 30%, rgba(255,255,255,.12) 60%, rgba(255,255,255,0) 90%);
+      filter: blur(18px);opacity:.35;animation: spin 14s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(1turn)}}
 
-    .actions{margin-top:8px;display:flex;gap:10px}
-    .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;letter-spacing:0.6px;backdrop-filter: blur(6px)}
-    .btn.primary{background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));box-shadow:0 6px 28px rgba(0,0,0,0.6), 0 0 18px rgba(var(--accent)/0.06);border:1px solid rgba(255,255,255,0.08)}
+    .card-bot{
+      width:900px;max-width:100%;border-radius:26px;
+      background: linear-gradient(180deg, #121212, #222);
+      border:1px solid var(--edge);
+      padding:16px 20px;display:flex;align-items:center;gap:14px;
+      box-shadow: 0 18px 64px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.04);
+      position:relative;overflow:hidden;backdrop-filter: blur(12px);
+      transform: translate3d(0,22px,0) rotateX(7deg);opacity: 0;
+      transition: transform .85s cubic-bezier(.2,.9,.2,1), opacity .85s ease;
+      will-change: transform;
+    }
+    .card-bot.visible{transform:translate3d(0,0,0) rotateX(0deg);opacity:1}
 
-    /* player card */
-    .player{border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--edge);padding:18px;display:flex;align-items:center;gap:16px;backdrop-filter: blur(6px)}
-    .thumb{width:72px;height:72px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+    .shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg, transparent 20%, rgba(255,255,255,.05) 45%, transparent 55%);transform:translateX(-120%);}
+    .card-top:hover .shine,.card-bot:hover .shine{animation:shine 2s ease}
+    @keyframes shine{to{transform:translateX(120%)}}
 
-    .controls{margin-left:auto;display:flex;align-items:center;gap:12px}
-    .control-btn{width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);display:grid;place-items:center;cursor:pointer}
+    .logo-wrap{display:flex;flex-direction: column;align-items: center;gap: 14px}
+    .logo {font-weight:800;color:var(--white);font-size:48px;letter-spacing:0.6px;position: relative;user-select:none;text-shadow:0 6px 24px rgba(255,255,255,0.08)}
 
-    /* progress */
-    .progressWrap{height:8px;border-radius:999px;background:rgba(255,255,255,0.06);flex:1;position:relative;overflow:hidden}
-    .progress{height:100%;width:0%;background:linear-gradient(90deg, hsl(var(--accent) / 0.92), rgba(255,255,255,0.95));box-shadow:0 6px 18px rgba(0,0,0,0.6) inset}
+    .spark{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;opacity:.18;box-shadow:0 0 10px 2px #fff}
+    .spark.a{left:9%;top:10px;animation:orb 5.8s ease-in-out infinite}
+    .spark.b{left:50%;top:-2px;animation:orb 6.6s ease-in-out infinite -1.2s}
+    .spark.c{left:84%;top:14px;animation:orb 7.2s ease-in-out infinite -2s}
+    .spark.d{left:30%;top:26px;animation:orb 7.8s ease-in-out infinite -2.8s}
+    .spark.e{left:70%;top:30px;animation:orb 6.2s ease-in-out infinite -1.7s}
+    @keyframes orb{0%,100%{transform:translateY(-4px) scale(1)}50%{transform:translateY(4px) scale(.7);opacity:.08}}
 
-    /* cursor follower */
-    .cursor-follower{position:fixed;top:0;left:0;width:28px;height:28px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) scale(1);z-index:60;mix-blend-mode:screen}
-    .cursor-follower .ring{width:100%;height:100%;border-radius:inherit;border:2px solid rgba(255,255,255,0.08);box-shadow:0 0 24px rgba(255,255,255,0.06), 0 0 60px rgba(var(--accent)/0.06)}
+    .subtext {color: var(--muted);font-weight:600;font-size:14px;letter-spacing:.9px;user-select:none;display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap}
+    .subtext span{padding:0 8px;border-left:1px solid var(--muted);border-right:1px solid var(--muted);position:relative}
+    .subtext span:first-child{border-left:none}.subtext span:last-child{border-right:none}
+    .subtext span::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:rgba(255,255,255,.12);transform:scaleX(0);transform-origin:center;transition:transform .35s ease}
+    .subtext span:hover::after{transform:scaleX(1)}
 
-    /* glass chips row */
-    .chips{display:flex;gap:12px;margin-top:12px}
-    .chip{padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));font-weight:700}
+    .socials-row{display:flex;gap:18px;margin-top:18px;justify-content:center;align-items:center;flex-wrap:wrap}
+    .social-icon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;cursor:pointer;position:relative;transition: transform .22s cubic-bezier(.4,0,.2,1), filter .22s cubic-bezier(.4,0,.2,1);filter: drop-shadow(0 0 2px #fff6)}
+    .social-icon svg{width:100%;height:100%;fill:#fff;opacity:.92;filter: drop-shadow(0 0 2px #fff6);transition: filter .22s cubic-bezier(.4,0,.2,1), opacity .22s cubic-bezier(.4,0,.2,1)}
+    .social-icon#tgBtn svg{width:112%;height:112%;transform: translateY(1px)}
+    .social-icon:hover,.social-icon:focus{transform: translateY(-6px) scale(1.1) rotate(-2deg);filter: drop-shadow(0 0 8px #fff9);outline:none}
+    .social-icon:active{transform: translateY(-2px) scale(.97);opacity:.7}
+    .copied-msg{position:absolute;top:-22px;left:50%;transform:translateX(-50%);background: rgba(30,30,30,0.95);color:#fff;font-size:12px;padding:2px 10px;border-radius:8px;opacity:0;pointer-events:none;transition: opacity .3s cubic-bezier(.4,0,.2,1);z-index:2;font-weight:600;letter-spacing:.2px}
+    .copied-msg.visible{opacity:1}
 
-    /* subtle focus outline */
-    [tabindex]:focus{outline:none;box-shadow:0 0 0 4px rgba(var(--accent)/0.06)}
+    .thumb{width:72px;height:72px;border-radius:14px;overflow:hidden;flex:0 0 72px;border:1px solid rgba(255,255,255,0.07);background:#111;box-shadow: 0 8px 24px rgba(255,255,255,0.03) inset}
+    .thumb img{width:100%;height:100%;object-fit:cover;transform:scale(1);animation: coverZoom 12s ease-in-out infinite alternate;border-radius: 14px}
+    @keyframes coverZoom{to{transform:scale(1.08)}}
 
-    /* full-screen visual layer */\    
-    .vfx-layer{position:fixed;inset:0;z-index:2;pointer-events:none}
+    .player-main{flex:1;display:flex;flex-direction: column;gap:10px;min-width:0}
+    .title-row{display:flex;justify-content: space-between;align-items: center;gap: 12px;min-width: 0}
+    .title{font-weight:800;font-size:18px;color:var(--white);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:68%;letter-spacing:.2px}
+    .time{color:var(--muted);font-weight:700;font-size:12px}
 
-    /* responsive */
-    @media (max-width:720px){.hero{padding:18px}.title{font-size:20px}.avatar{width:72px;height:72px}.left{width:72px}.chips{flex-wrap:wrap}}
+    .progressWrap{height:8px;border-radius:999px;background: rgba(255,255,255,0.14);overflow:hidden;position:relative;cursor:pointer}
+    .progressWrap::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);mix-blend:soft-light;animation: sweep 3s linear infinite}
+    @keyframes sweep{to{transform:translateX(100%)}}
+    .progressBar{height: 100%;width: 0%;background: linear-gradient(90deg, #fff 15%, #ddd 85%);box-shadow: 0 6px 18px rgba(255,255,255,0.3) inset;transition: width .14s linear}
+
+    .controls{display:flex;align-items:center;gap:14px;justify-content:flex-end}
+    .icon-btn,.play-btn{background: rgba(255,255,255,0.08);border:none;box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18);cursor:pointer;border-radius: 12px;width: 40px;height: 40px;display: inline-grid;place-items: center;transition:background-color .25s cubic-bezier(.4,0,.2,1),box-shadow .3s cubic-bezier(.4,0,.2,1),transform .18s cubic-bezier(.4,0,.2,1),filter .22s cubic-bezier(.4,0,.2,1);user-select:none;opacity:.9}
+    .icon-btn svg,.play-btn svg{stroke:none;fill:var(--white);width:18px;height:18px;display:block}
+    .icon-btn:hover,.play-btn:hover{background: rgba(255,255,255,0.16);box-shadow: 0 0 18px 2px rgba(255,255,255,0.25);transform: translateY(-1px) scale(1.12)}
+    .icon-btn:active,.play-btn:active{transform: translateY(0) scale(.93);box-shadow: 0 0 6px 1px rgba(255,255,255,0.25);opacity:.75}
+    .play-btn{width: 48px;height: 48px}
+
+    .meta{color: var(--muted);font-size: 13px;display:flex;gap:12px;align-items:center;justify-content: space-between;margin-top:6px}
+
+    .overlay{position: fixed;inset: 0;display: flex;align-items: center;justify-content: center;background: rgba(0,0,0,0.9);z-index: 10;cursor: pointer;color: var(--white);font-weight: 800;letter-spacing: 1px;font-size: 24px;text-transform: lowercase;opacity: 1;transition: opacity .6s ease;user-select:none}
+    .overlay.smallhint{font-size:13px;font-weight:600;letter-spacing:.3px}
+
+    #viz{position:absolute;inset:0;z-index:0;opacity:.18;mix-blend:screen;pointer-events:none}
+
+    @media (max-width:720px){
+      .card-top,.card-bot{padding:16px;border-radius:18px}
+      .thumb{width:58px;height:58px;flex:0 0 58px}
+      .title{font-size:16px;max-width:55%}
+      .logo{font-size:36px}
+      .controls{gap:10px}
+      .icon-btn,.play-btn{transform:scale(.92)}
+      .progressWrap{height:8px}
+    }
+    @media (max-width:480px){
+      .stage{padding:16px}
+      .subtext{font-size:12px;gap:10px}
+      .title{font-size:14px;max-width:50%}
+      .controls{gap:8px}
+      .icon-btn,.play-btn{transform:scale(.88)}
+      .progressWrap{height:8px}
+    }
   </style>
 </head>
 <body>
-  <canvas id="bgCanvas" class="bg-canvas"></canvas>
-  <div class="cursor-follower" id="cursorFollower"><div class="ring"></div></div>
+  <div class="scanlines"></div>
+  <div class="grain"></div>
 
-  <div class="stage">
-    <div class="container">
+  <div class="stage" role="main" aria-label="avi player">
+    <canvas id="viz"></canvas>
+    <div class="container" id="tiltContainer">
 
-      <header class="hero" role="banner" aria-label="Profile header">
-        <div class="left">
-          <div class="avatar"><img src="https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" alt="avatar"/></div>
-        </div>
-        <div class="meta">
-          <div class="title">@avi</div>
-          <div class="subtitle">dev • caller • poor • siteowner</div>
-          <div class="chips" aria-hidden="true">
-            <div class="chip">JavaScript</div>
-            <div class="chip">Design</div>
-            <div class="chip">Audio</div>
+      <div class="card-top" id="topCard" aria-hidden="false">
+        <div class="shine"></div>
+        <div class="logo-wrap" aria-hidden="true">
+          <div class="logo" id="logoText">avi
+            <span class="spark a"></span>
+            <span class="spark b"></span>
+            <span class="spark c"></span>
+            <span class="spark d"></span>
+            <span class="spark e"></span>
           </div>
-          <div class="actions">
-            <button class="btn primary" id="enterBtn">Enter site</button>
-            <button class="btn" id="contactBtn">Contact</button>
+          <div class="subtext" aria-hidden="true">
+            <span>dev</span>
+            <span>caller</span>
+            <span>poor</span>
+            <span>siteowner</span>
           </div>
-        </div>
-      </header>
-
-      <section class="player" role="region" aria-label="Audio player">
-        <div class="thumb"><img src="https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" alt="track art"/></div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;min-width:0">
-            <div style="font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">OsamaSon - Text Back (demo)</div>
-            <div style="color:var(--muted);margin-left:auto">1:39</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="controls">
-              <button class="control-btn" id="prevBtn" aria-label="Previous">◀</button>
-              <button class="control-btn" id="playBtn" aria-label="Play">▶</button>
-              <button class="control-btn" id="nextBtn" aria-label="Next">▶▶</button>
+          <div class="socials-row">
+            <div class="social-icon" id="discordBtn" aria-label="Copy Discord username" tabindex="0">
+              <svg viewBox="0 0 24 24"><path d="M20.317 4.369A19.791 19.791 0 0 0 16.885 3.2a.112.112 0 0 0-.119.056c-.524.908-.99 1.867-1.361 2.723a18.524 18.524 0 0 0-5.03 0A12.76 12.76 0 0 0 8.01 3.257a.115.115 0 0 0-.119-.057A19.736 19.736 0 0 0 3.683 4.369a.105.105 0 0 0-.047.041C.533 9.09-.32 13.579.099 18.021a.116.116 0 0 0 .045.081c2.053 1.507 4.042 2.422 5.993 3.029a.112.112 0 0 0 .123-.041c.462-.63.874-1.295 1.226-1.994a.112.112 0 0 0-.061-.155c-.652-.247-1.27-.548-1.872-.892a.112.112 0 0 1-.011-.188c.126-.094.252-.192.372-.291a.112.112 0 0 1 .114-.013c3.927 1.793 8.18 1.793 12.061 0a.112.112 0 0 1 .115.012c.12.099.246.197.372.291a.112.112 0 0 1-.01.188 12.298 12.298 0 0 1-1.873.892.112.112 0 0 0-.06.156c.36.698.773 1.362 1.225 1.993a.112.112 0 0 0 .123.041c1.951-.607 3.94-1.522 5.993-3.029a.115.115 0 0 0 .045-.081c.5-5.177-.838-9.637-3.267-13.611a.104.104 0 0 0-.047-.041zM8.02 15.331c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.174 1.095 2.156 2.418 0 1.334-.955 2.419-2.156 2.419zm7.974 0c-1.183 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.174 1.095 2.156 2.418 0 1.334-.946 2.419-2.156 2.419z"/></svg>
+              <span class="copied-msg" id="discordCopied">Copied!</span>
             </div>
-            <div class="progressWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-              <div class="progress" id="progressBar"></div>
+            <div class="social-icon" id="tgBtn" aria-label="Open Telegram" tabindex="0">
+              <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      <div class="card-bot" id="playerCard" aria-hidden="true">
+        <div class="shine"></div>
+        <div class="thumb" aria-hidden="true">
+          <img src="https://r2.guns.lol/223177fc-6c3d-45e2-8e71-257d3a3456b5.webp" alt="Player thumbnail"/>
+        </div>
+        <div class="player-main">
+          <div class="title-row">
+            <div class="title">OsamaSon - Text Back</div>
+          </div>
+          <div class="progress-section" style="display:flex; align-items:center; gap:12px;">
+            <div class="time" id="currentTime">0:00</div>
+            <div class="progressWrap" aria-label="Playback progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="flex:1; margin:0 8px;">
+              <div class="progressBar"></div>
+            </div>
+            <div class="time" id="duration">1:39</div>
+          </div>
+        </div>
+        <div class="controls" style="margin-left:18px;">
+          <button class="icon-btn" id="backBtn" aria-label="Previous track">
+            <svg viewBox="0 0 24 24"><path d="M16.5 19V5a1 1 0 0 0-1.6-.8l-8.2 7a1 1 0 0 0 0 1.6l8.2 7a1 1 0 0 0 1.6-.8z"/></svg>
+          </button>
+          <button class="play-btn" id="playBtn" aria-label="Play">
+            <svg viewBox="0 0 24 24">
+              <polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="nextBtn" aria-label="Next track">
+            <svg viewBox="0 0 24 24"><path d="M7.5 5v14a1 1 0 0 0 1.6.8l8.2-7a1 1 0 0 0 0-1.6l-8.2-7A1 1 0 0 0 7.5 5z"/></svg>
+          </button>
+        </div>
+        <audio id="audio" src="audio.mp3" preload="auto" style="display:none;"></audio>
+      </div>
 
     </div>
+
+    <div class="overlay" id="overlay" role="button" tabindex="0" aria-label="Click to enter">click to enter</div>
   </div>
 
-  <div class="vfx-layer" id="vfxLayer"></div>
-
-  <audio id="audio" src="audio.mp3" preload="auto"></audio>
-
   <script>
-    // Canvas starfield + volumetric lights + subtle nebula
-    const bg = document.getElementById('bgCanvas'); const ctx = bg.getContext('2d');
-    function resize(){ bg.width = innerWidth; bg.height = innerHeight; }
-    addEventListener('resize', resize); resize();
+    const overlay = document.getElementById('overlay');
+    const topCard = document.getElementById('topCard');
+    const playerCard = document.getElementById('playerCard');
+    const playBtn = document.getElementById('playBtn');
+    const progressBar = document.querySelector('.progressBar');
+    const audio = document.getElementById('audio');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const viz = document.getElementById('viz');
+    const ctx = viz.getContext('2d');
 
-    // generate stars
-    const stars = Array.from({length: 160}, () => ({x: Math.random()*bg.width, y: Math.random()*bg.height, r: Math.random()*1.6+0.2, tw: Math.random()*2+1, t: Math.random()*Math.PI*2}));
+    function showCards() {
+      topCard.classList.add('visible');
+      playerCard.classList.add('visible');
+    }
 
-    function drawBG(){ ctx.clearRect(0,0,bg.width,bg.height);
-      // soft nebula blobs
-      const g = ctx.createLinearGradient(0,0,bg.width,bg.height); g.addColorStop(0,'rgba(30,30,40,0.12)'); g.addColorStop(1,'rgba(0,0,0,0.12)'); ctx.fillStyle = g; ctx.fillRect(0,0,bg.width,bg.height);
-      // layered radial glows
-      [['20%',.08],[ '80%', .06 ]].forEach((p,i)=>{
-        const gx = ctx.createRadialGradient(bg.width*p[0]/100,bg.height*p[0]/100,0,bg.width*p[0]/100,bg.height*p[0]/100, Math.max(bg.width,bg.height)*0.9);
-        gx.addColorStop(0, `rgba(255,255,255,${p[1]})`); gx.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle = gx; ctx.fillRect(0,0,bg.width,bg.height);
+    overlay.addEventListener('click', () => {
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      showCards();
+      audio.play();
+    });
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); overlay.click();
+      }
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if(e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if(e.code === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+      if(e.code === 'ArrowRight') audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+    });
+
+    let isPlaying = false;
+    function togglePlay(){ isPlaying ? audio.pause() : audio.play(); }
+    playBtn.addEventListener('click', togglePlay);
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      playBtn.setAttribute('aria-label', 'Pause');
+      playBtn.querySelector('svg').innerHTML = '<rect x="8" y="5" width="3.5" height="14" rx="1.2"/><rect x="13" y="5" width="3.5" height="14" rx="1.2"/>';
+    });
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      playBtn.setAttribute('aria-label', 'Play');
+      playBtn.querySelector('svg').innerHTML = '<polygon points="6 4 20 12 6 20 6 4"/>';
+    });
+
+    function formatTime(sec){ const m = Math.floor(sec/60); const s = Math.floor(sec%60); return `${m}:${s.toString().padStart(2,'0')}` }
+    audio.addEventListener('timeupdate', () => {
+      const pct = (audio.currentTime / audio.duration) * 100; progressBar.style.width = pct + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+    audio.addEventListener('loadedmetadata', () => { durationEl.textContent = formatTime(audio.duration); resizeCanvas(); });
+    document.querySelector('.progressWrap').addEventListener('click', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left; const percent = x / rect.width; audio.currentTime = percent * audio.duration;
+    });
+
+    document.getElementById('tgBtn').addEventListener('click', () => { window.open('https://t.me/x0xr0', '_blank'); });
+    const discordBtn = document.getElementById('discordBtn');
+    discordBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText('rxckbs');
+      const msg = document.getElementById('discordCopied'); msg.classList.add('visible'); setTimeout(()=>msg.classList.remove('visible'),1100);
+    });
+
+    const tiltContainer = document.getElementById('tiltContainer');
+    const cards = [topCard, playerCard];
+    function parallax(e){
+      const rect = tiltContainer.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      cards.forEach((el,i)=>{
+        const depth = i ? 10 : 14;
+        el.style.transform = `rotateX(${(-y*depth)}deg) rotateY(${(x*depth)}deg) translateZ(0)`;
       });
-      // stars
-      for(let s of stars){ s.t += 0.02; const flick = Math.sin(s.t)*0.5+0.5; ctx.globalAlpha = 0.9*flick; ctx.beginPath(); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.arc(s.x, s.y, s.r,0,Math.PI*2); ctx.fill(); }
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(drawBG);
     }
-    drawBG();
+    tiltContainer.addEventListener('mousemove', parallax);
+    tiltContainer.addEventListener('mouseleave', ()=> cards.forEach(el=> el.style.transform=''));
 
-    // cursor follower
-    const cursor = document.getElementById('cursorFollower'); let mouseX = innerWidth/2, mouseY = innerHeight/2, cx = mouseX, cy = mouseY;
-    addEventListener('pointermove', e=>{ mouseX = e.clientX; mouseY = e.clientY; });
-    function tickCursor(){ cx += (mouseX - cx) * 0.18; cy += (mouseY - cy) * 0.18; cursor.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`; requestAnimationFrame(tickCursor); }
-    tickCursor();
+    (function typewriter(){
+      const text = "@avi"; let index = 0; function step(){
+        if(index <= text.length){ document.title = text.substring(0,index); index++; setTimeout(step, 200); }
+        else { index = 0; setTimeout(step, 1600); }
+      } step();
+    })();
 
-    // vfx layer: particles on hover & gentle lens flare on play
-    const vfx = document.getElementById('vfxLayer'); const vfxCtx = document.createElement('canvas'); vfx.appendChild(vfxCtx); vfxCtx.style.width='100%'; vfxCtx.style.height='100%'; vfxCtx.width = innerWidth; vfxCtx.height = innerHeight; vfxCtx.style.pointerEvents='none'; const vctx = vfxCtx.getContext('2d'); addEventListener('resize', ()=>{ vfxCtx.width = innerWidth; vfxCtx.height = innerHeight; });
+    let analyser, dataArray, raf;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(audio);
+    analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; const bufferLength = analyser.frequencyBinCount; dataArray = new Uint8Array(bufferLength);
+    source.connect(analyser); analyser.connect(audioCtx.destination);
 
-    const particles = [];
-    function spawnParticle(x,y){ particles.push({x,y,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,life:Math.random()*60+40,r:Math.random()*3+1}) }
-    addEventListener('pointermove', e=>{ for(let i=0;i<2;i++) spawnParticle(e.clientX + (Math.random()-0.5)*20, e.clientY + (Math.random()-0.5)*20); });
+    function resizeCanvas(){ viz.width = viz.clientWidth; viz.height = viz.clientHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
-    function drawVFX(){ vctx.clearRect(0,0,vfxCtx.width,vfxCtx.height); for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life--; const alpha = Math.max(0, p.life/120); vctx.beginPath(); vctx.fillStyle = `rgba(255,255,255,${0.08*alpha})`; vctx.arc(p.x,p.y,p.r,0,Math.PI*2); vctx.fill(); if(p.life<=0) particles.splice(i,1); }
-      requestAnimationFrame(drawVFX);
+    function draw(){
+      raf = requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0,0,viz.width,viz.height);
+      const w = viz.width, h = viz.height; const bars = 64; const gap = 4; const barW = (w / bars);
+      for(let i=0;i<bars;i++){
+        const v = dataArray[Math.floor(i * bufferLength / bars)]/255;
+        const bh = Math.max(2, v * (h*0.35));
+        const x = i * barW + gap/2; const y = h - bh - 10;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        const radius = 6; const bw = barW - gap;
+        roundRect(ctx, x, y, bw, bh, radius);
+        ctx.fill();
+        ctx.shadowColor = 'rgba(255,255,255,0.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = -2;
+      }
+      const pulse = 0.15 + (dataArray[5]/255)*0.25;
+      const grd = ctx.createRadialGradient(w/2,h/2,0,w/2,h/2, Math.max(w,h)/2);
+      grd.addColorStop(0, `rgba(255,255,255,${pulse})`);
+      grd.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grd; ctx.fillRect(0,0,w,h);
+      ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
     }
-    drawVFX();
 
-    // quick lens flare helper
-    function flare(x,y,strength=0.6){ const g = vctx.createRadialGradient(x,y,0,x,y,200); g.addColorStop(0,`rgba(255,255,255,${0.15*strength})`); g.addColorStop(1,'rgba(255,255,255,0)'); vctx.fillStyle = g; vctx.fillRect(x-200,y-200,400,400); }
+    function roundRect(ctx, x, y, w, h, r){
+      r = Math.min(r, w/2, h/2); ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+    }
 
-    // audio + visualiser hook (light pulse + progress)
-    const audio = document.getElementById('audio'); const playBtn = document.getElementById('playBtn'); const progressBar = document.getElementById('progressBar');
-    const AudioCtx = window.AudioContext || window.webkitAudioContext; let audioCtx, analyser, dataArr, source;
-    function initAudio(){ if(audioCtx) return; audioCtx = new AudioCtx(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; dataArr = new Uint8Array(analyser.frequencyBinCount); source = audioCtx.createMediaElementSource(audio); source.connect(analyser); analyser.connect(audioCtx.destination); }
-
-    playBtn.addEventListener('click', async ()=>{ initAudio(); if(audio.paused){ await audio.play(); playBtn.textContent='❚❚'; flare(innerWidth/2, innerHeight/2, 0.9); } else { audio.pause(); playBtn.textContent='▶'; } });
-
-    audio.addEventListener('timeupdate', ()=>{ const pct = (audio.currentTime / (audio.duration || 1))*100; progressBar.style.width = pct+'%'; if(analyser){ analyser.getByteFrequencyData(dataArr); const avg = dataArr.reduce((s,v)=>s+v,0)/dataArr.length; const scale = 0.6 + Math.min(1, avg/180); document.querySelector('.avatar img').style.transform = `scale(${1 + (scale-0.6)*0.02})`; } });
-
-    // keyboard accessibility
-    addEventListener('keydown', e=>{ if(e.code==='Space'){ e.preventDefault(); playBtn.click(); } if(e.code==='ArrowRight'){ audio.currentTime = Math.min((audio.duration||0), audio.currentTime + 5) } if(e.code==='ArrowLeft'){ audio.currentTime = Math.max(0, audio.currentTime - 5) } });
-
-    // subtle entrance animation
-    document.getElementById('enterBtn').addEventListener('click', ()=>{ document.body.animate([{filter:'blur(8px) saturate(.8)'},{filter:'none'}],{duration:600,easing:'cubic-bezier(.2,.9,.3,1)'}); document.querySelector('.hero').animate([{transform:'translateY(18px) rotateX(6deg)'},{transform:'none'}],{duration:700,easing:'cubic-bezier(.2,.9,.2,1)'}); });
-
-    // small UX: copy telegram / discord quickly
-    const contact = document.getElementById('contactBtn'); contact.addEventListener('click', ()=>{ navigator.clipboard.writeText('t.me/x0xr0 / rxckbs'); contact.textContent='copied ✓'; setTimeout(()=>contact.textContent='Contact',1500); });
+    audio.addEventListener('play', () => { audioCtx.resume(); cancelAnimationFrame(raf); draw(); });
+    audio.addEventListener('pause', () => cancelAnimationFrame(raf));
 
   </script>
 </body>
