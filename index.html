@@ -24,7 +24,8 @@
       background:var(--bg);
       font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial;
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale
+      -moz-osx-font-smoothing:grayscale;
+      padding-bottom:120px
     }
 
     .stage{
@@ -154,8 +155,8 @@
     .overlay.smallhint{font-size:13px;font-weight:600;letter-spacing:.3px}
 
     /* fx sits at the very back; viz above it under cards */
-    #fx{position:absolute;inset:0;z-index:0;opacity:.35;mix-blend-mode:soft-light;pointer-events:none;filter: blur(.2px)}
-    #viz{position:absolute;inset:0;z-index:3;opacity:0.35;mix-blend-mode:screen;pointer-events:none}
+    #fx{position:absolute;inset:0;z-index:0;opacity:.32;mix-blend-mode:soft-light;pointer-events:none;filter: blur(.2px)}
+    #viz{position:absolute;inset:0;z-index:1;opacity:0.28;mix-blend-mode:screen;pointer-events:none}
     .cursor-trail{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.22}
     .cursor-trail canvas{width:100%;height:100%}
 
@@ -189,9 +190,9 @@
     .scroll-indicator .dot{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.35;animation: sd 1.8s ease-in-out infinite}
     @keyframes sd{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(6px);opacity:.7}}
 
-    .blocks{width:min(980px,92%);margin:80px auto 120px;display:flex;flex-direction:column;gap:28px;position:relative;z-index:2}
-    .content-block{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center;background:linear-gradient(180deg,#121212,#1d1d1d);border:1px solid var(--edge);border-radius:24px;overflow:hidden;padding:18px;opacity:0;transform:translateY(28px) scale(.98);transition:opacity .7s cubic-bezier(.2,.9,.2,1), transform .7s cubic-bezier(.2,.9,.2,1);box-shadow:0 12px 48px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04)}
-    .content-block.visible{opacity:1;transform:translateY(0) scale(1)}
+    .blocks{width:min(980px,92%);margin:80px auto 160px;display:flex;flex-direction:column;gap:32px;position:relative;z-index:2}
+    .content-block{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center;background:linear-gradient(180deg,#121212,#1d1d1d);border:1px solid var(--edge);border-radius:24px;overflow:hidden;padding:18px;opacity:0;transform:translateY(32px) scale(.985);filter:blur(6px);transition:opacity .9s cubic-bezier(.22,.9,.2,1), transform .9s cubic-bezier(.22,.9,.2,1), filter .9s ease;will-change:transform,opacity,filter;box-shadow:0 12px 48px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04)}
+    .content-block.visible{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
     .content-media{aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:#0f0f0f}
     .content-media img{width:100%;height:100%;object-fit:cover;transform:scale(1);transition:transform 6s ease}
     .content-block.visible .content-media img{transform:scale(1.06)}
@@ -271,16 +272,8 @@
           </div>
         </div>
         <div class="controls" style="margin-left:18px;">
-          <button class="icon-btn" id="backBtn" aria-label="Previous track">
-            <svg viewBox="0 0 24 24"><path d="M16.5 19V5a1 1 0 0 0-1.6-.8l-8.2 7a1 1 0 0 0 0 1.6l8.2 7a1 1 0 0 0 1.6-.8z"/></svg>
-          </button>
-          <button class="play-btn" id="playBtn" aria-label="Play">
-            <svg viewBox="0 0 24 24">
-              <polygon id="playPauseIcon" points="6 4 20 12 6 20 6 4"/>
-            </svg>
-          </button>
-          <button class="icon-btn" id="nextBtn" aria-label="Next track">
-            <svg viewBox="0 0 24 24"><path d="M7.5 5v14a1 1 0 0 0 1.6.8l8.2-7a1 1 0 0 0 0-1.6l-8.2-7A1 1 0 0 0 7.5 5z"/></svg>
+          <button class="icon-btn" id="muteBtn" aria-label="Mute">
+            <svg viewBox="0 0 24 24"><path id="muteIconPath" d="M5 9v6h3l5 5V4L8 9H5z M16 12a4 4 0 0 0-1.2-2.8l-1.1 1.1a2.4 2.4 0 0 1 0 3.4l1.1 1.1A4 4 0 0 0 16 12z"/></svg>
           </button>
         </div>
         <audio id="audio" src="audio.mp3" preload="auto" style="display:none;"></audio>
@@ -367,7 +360,8 @@
     const overlay = document.getElementById('overlay');
     const topCard = document.getElementById('topCard');
     const playerCard = document.getElementById('playerCard');
-    const playBtn = document.getElementById('playBtn');
+    // controls
+    const muteBtn = document.getElementById('muteBtn');
     const progressBar = document.querySelector('.progressBar');
     const audio = document.getElementById('audio');
     const currentTimeEl = document.getElementById('currentTime');
@@ -392,7 +386,7 @@
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         sourceNode = audioCtx.createMediaElementSource(audio);
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 512;
+        analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.78;
         bufferLength = analyser.frequencyBinCount;
         dataArray = new Uint8Array(bufferLength);
@@ -411,7 +405,7 @@
       showCards();
       ensureAudioContext();
       startFx();
-      try { await audio.play(); } catch (e) { /* autoplay blocked — user can use play button */ }
+      try { await audio.play(); } catch (e) {}
     });
     overlay.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); overlay.click(); }
@@ -426,32 +420,27 @@
 
     // keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
-      if (e.code === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
-      if (e.code === 'ArrowRight') audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+      if (e.key.toLowerCase() === 'm') { e.preventDefault(); audio.muted = !audio.muted; updateMuteIcon(); }
     });
 
-    // play/pause
-    let isPlaying = false;
-    function togglePlay(){ isPlaying ? audio.pause() : audio.play(); }
-    playBtn.addEventListener('click', () => {
-      ensureAudioContext();
-      togglePlay();
-    });
-
-    audio.addEventListener('play', () => {
-      isPlaying = true;
-      playBtn.setAttribute('aria-label', 'Pause');
-      playBtn.querySelector('svg').innerHTML = '<rect x="8" y="5" width="3.5" height="14" rx="1.2"/><rect x="13" y="5" width="3.5" height="14" rx="1.2"/>';
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      startViz();
-    });
-    audio.addEventListener('pause', () => {
-      isPlaying = false;
-      playBtn.setAttribute('aria-label', 'Play');
-      playBtn.querySelector('svg').innerHTML = '<polygon points="6 4 20 12 6 20 6 4"/>';
-      stopViz();
-    });
+    // mute toggle
+    function updateMuteIcon(){
+      const path = document.getElementById('muteIconPath');
+      if (!path) return;
+      if (audio.muted) {
+        path.setAttribute('d','M5 9v6h3l5 5V4L8 9H5z M19 5l-1.5 1.5L15 9l-2 2 2 2 2.5 2.5L19 17l-2.5-2.5L14 12l2.5-2.5L19 7z');
+        muteBtn.setAttribute('aria-label','Unmute');
+      } else {
+        path.setAttribute('d','M5 9v6h3l5 5V4L8 9H5z M16 12a4 4 0 0 0-1.2-2.8l-1.1 1.1a2.4 2.4 0 0 1 0 3.4l1.1 1.1A4 4 0 0 0 16 12z');
+        muteBtn.setAttribute('aria-label','Mute');
+      }
+    }
+    if (muteBtn) {
+      muteBtn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        updateMuteIcon();
+      });
+    }
 
     // format time
     function formatTime(sec){
@@ -557,7 +546,7 @@
       ctx.fillRect(0,0,w,h);
 
       // bars (greys) — more bars, taller
-      const bars = Math.min(96, Math.floor(w / 8));
+      const bars = Math.min(64, Math.floor(w / 10));
       const gap = 3;
       const barW = (w / bars);
       for (let i=0;i<bars;i++){
@@ -621,7 +610,7 @@
       // starburst spokes from center for big moments
       ctx.save();
       ctx.translate(cx, cy);
-      const spokes = 48;
+      const spokes = 32;
       for (let i=0;i<spokes;i++){
         const idx = Math.floor(i * bufferLength / spokes);
         const v = (dataArray[idx] || 0) / 255;
@@ -655,7 +644,7 @@
     function initParticles(){
       particles.length = 0;
       const w = fx.clientWidth, h = fx.clientHeight;
-      const count = Math.round(Math.min(220, Math.max(120, (w*h)/25000)));
+      const count = Math.round(Math.min(160, Math.max(80, (w*h)/42000)));
       for(let i=0;i<count;i++){
         particles.push({
           x: Math.random()*w,
@@ -693,8 +682,8 @@
         const r = Math.min(w,h) * (0.08 + i*0.045);
         fxCtx.beginPath();
         fxCtx.arc(0,0,r,0,Math.PI*2);
-        fxCtx.strokeStyle = `rgba(255,255,255,${0.025 + 0.02*Math.sin(t*1.6 + i)})`;
-        fxCtx.lineWidth = 0.6 + 0.8*(1+Math.sin(t*2+i))/2 + beatGlitch*0.8;
+        fxCtx.strokeStyle = `rgba(255,255,255,${0.02 + 0.015*Math.sin(t*1.6 + i)})`;
+        fxCtx.lineWidth = 0.5 + 0.6*(1+Math.sin(t*2+i))/2 + beatGlitch*0.6;
         fxCtx.stroke();
       }
       fxCtx.restore();
@@ -754,8 +743,7 @@
     })();
 
     // simple back/next shortcuts to keep UX
-    document.getElementById('backBtn').addEventListener('click', ()=> { audio.currentTime = Math.max(0, audio.currentTime - 8); });
-    document.getElementById('nextBtn').addEventListener('click', ()=> { audio.currentTime = Math.min((audio.duration||0), audio.currentTime + 8); });
+    // removed skip/back controls
 
     // reveal cards on DOM ready if overlay ignored
     document.addEventListener('DOMContentLoaded', ()=> {
