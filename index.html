@@ -49,19 +49,19 @@
     }
     @keyframes drift{to{transform:translate3d(-4%,2%,0) rotate(1deg)}}
 
-    .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.08;mix-blend:screen;
+    .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.08;mix-blend-mode:screen;
       background-image: repeating-linear-gradient( to bottom, #fff0 0px, #fff0 2px, #fff1 3px, #fff0 4px );
       animation: sl 6s linear infinite;
     }
     @keyframes sl{from{background-position:0 0} to{background-position:0 100%}}
 
-    .grain{position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:.06;mix-blend:soft-light;
+    .grain{position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:.06;mix-blend-mode:soft-light;
       background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.35"/></svg>');
       animation: grain 1.6s steps(2,end) infinite;
     }
     @keyframes grain{to{transform:translate3d(-3%,2%,0)}}
 
-    .container{width:min(900px,92%);max-width:1100px;z-index:1;display:flex;flex-direction:column;gap:18px;align-items:center}
+    .container{width:min(900px,92%);max-width:1100px;z-index:2;display:flex;flex-direction:column;gap:18px;align-items:center}
 
     .card-top{
       width:900px;max-width:100%;border-radius:28px;
@@ -137,7 +137,7 @@
     .time{color:var(--muted);font-weight:700;font-size:12px}
 
     .progressWrap{height:8px;border-radius:999px;background: rgba(255,255,255,0.14);overflow:hidden;position:relative;cursor:pointer}
-    .progressWrap::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);mix-blend:soft-light;animation: sweep 3s linear infinite}
+    .progressWrap::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);mix-blend-mode:soft-light;animation: sweep 3s linear infinite}
     @keyframes sweep{to{transform:translateX(100%)}}
     .progressBar{height: 100%;width: 0%;background: linear-gradient(90deg, #b7b7b7 15%, #818181 85%);box-shadow: 0 6px 18px rgba(255,255,255,0.06) inset;transition: width .14s linear}
 
@@ -153,8 +153,11 @@
     .overlay{position: fixed;inset: 0;display: flex;align-items: center;justify-content: center;background: rgba(0,0,0,0.9);z-index: 10;cursor: pointer;color: var(--white);font-weight: 800;letter-spacing: 1px;font-size: 24px;text-transform: lowercase;opacity: 1;transition: opacity .6s ease;user-select:none}
     .overlay.smallhint{font-size:13px;font-weight:600;letter-spacing:.3px}
 
-    /* viz sits under cards */
-    #viz{position:absolute;inset:0;z-index:0;opacity:0.18;mix-blend:screen;pointer-events:none}
+    /* fx sits at the very back; viz above it under cards */
+    #fx{position:absolute;inset:0;z-index:0;opacity:.35;mix-blend-mode:soft-light;pointer-events:none;filter: blur(.2px)}
+    #viz{position:absolute;inset:0;z-index:1;opacity:0.2;mix-blend-mode:screen;pointer-events:none}
+    .cursor-trail{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.22}
+    .cursor-trail canvas{width:100%;height:100%}
 
     @media (max-width:720px){
       .card-top,.card-bot{padding:16px;border-radius:18px}
@@ -185,6 +188,7 @@
   <div class="grain"></div>
 
   <div class="stage" role="main" aria-label="avi player">
+    <canvas id="fx" aria-hidden="true"></canvas>
     <canvas id="viz" aria-hidden="true"></canvas>
     <div class="container" id="tiltContainer">
 
@@ -265,6 +269,9 @@
     const currentTimeEl = document.getElementById('currentTime');
     const durationEl = document.getElementById('duration');
     const viz = document.getElementById('viz');
+    const fx = document.getElementById('fx');
+    const ctx = viz.getContext('2d', { alpha: true });
+    const fxCtx = fx.getContext('2d', { alpha: true });
 
     // show cards
     function showCards() {
@@ -298,6 +305,7 @@
       overlay.style.pointerEvents = 'none';
       showCards();
       ensureAudioContext();
+      startFx();
       try { await audio.play(); } catch (e) { /* autoplay blocked — user can use play button */ }
     });
     overlay.addEventListener('keydown', (e) => {
@@ -391,13 +399,21 @@
 
     // viz: dark/grey palette, DPI-aware
     let rafViz = null;
+    let rafFx = null;
     function resizeCanvas(){
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const maxDpr = 1.75; // guardrails
+      const dpr = Math.min(maxDpr, Math.max(1, window.devicePixelRatio || 1));
       viz.width = viz.clientWidth * dpr;
       viz.height = viz.clientHeight * dpr;
       viz.style.width = viz.clientWidth + 'px';
       viz.style.height = viz.clientHeight + 'px';
       ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      fx.width = fx.clientWidth * dpr;
+      fx.height = fx.clientHeight * dpr;
+      fx.style.width = fx.clientWidth + 'px';
+      fx.style.height = fx.clientHeight + 'px';
+      fxCtx.setTransform(dpr,0,0,dpr,0,0);
     }
     window.addEventListener('resize', debounce(resizeCanvas, 120));
     resizeCanvas();
@@ -456,6 +472,38 @@
       }
       ctx.shadowBlur = 0;
       ctx.shadowColor = 'transparent';
+
+      // circular spectrum ring
+      const cx = w/2, cy = h/2;
+      const radius = Math.min(w,h) * 0.22;
+      const ringBins = 96;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(performance.now()/4000);
+      for (let i=0;i<ringBins;i++){
+        const idx = Math.floor(i * bufferLength / ringBins);
+        const v = (dataArray[idx] || 0) / 255;
+        const len = radius + v * radius * 0.55;
+        const a0 = (i / ringBins) * Math.PI * 2;
+        const a1 = ((i+1) / ringBins) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(220,220,220,${0.06 + v*0.25})`;
+        ctx.lineWidth = 1.2 + v * 2.0;
+        ctx.arc(0,0,len, a0, a1);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // beat detection (bass avg)
+      let bassAvg = 0; const bassCount = Math.max(8, Math.floor(bufferLength*0.06));
+      for (let i=0;i<bassCount;i++){ bassAvg += dataArray[i]||0; }
+      bassAvg = (bassAvg / bassCount) / 255;
+      if (bassAvg > 0.4) beatGlitch = Math.min(1, beatGlitch + (bassAvg-0.35)*0.9);
+
+      // logo jitter on beat
+      const logo = document.getElementById('logoText');
+      const jitter = beatGlitch * 2.5;
+      logo.style.textShadow = `0 ${jitter}px ${2+jitter}px rgba(255,255,255,0.12), 0 -${jitter}px ${1+jitter}px rgba(255,255,255,0.06)`;
     }
 
     function roundRect(ctx, x, y, w, h, r){
@@ -467,6 +515,77 @@
       ctx.arcTo(x, y+h, x, y, r);
       ctx.arcTo(x, y, x+w, y, r);
       ctx.closePath();
+    }
+
+    // FX: monochrome rings + particle bloom
+    const particles = [];
+    let beatGlitch = 0;
+    function initParticles(){
+      particles.length = 0;
+      const w = fx.clientWidth, h = fx.clientHeight;
+      const count = Math.round(Math.min(220, Math.max(120, (w*h)/25000)));
+      for(let i=0;i<count;i++){
+        particles.push({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.6,
+          vy: (Math.random()-0.5)*0.6,
+          life: Math.random()*200+60,
+          size: Math.random()*1.6+0.4
+        });
+      }
+    }
+
+    function startFx(){
+      if (rafFx) cancelAnimationFrame(rafFx);
+      initParticles();
+      drawFx();
+    }
+    function stopFx(){
+      if (rafFx) cancelAnimationFrame(rafFx);
+      rafFx = null;
+    }
+
+    function drawFx(){
+      rafFx = requestAnimationFrame(drawFx);
+      const w = fx.clientWidth, h = fx.clientHeight;
+      fxCtx.clearRect(0,0,fx.width,fx.height);
+
+      // rotating monochrome rings
+      const t = performance.now()/1000;
+      const cx = w/2, cy = h/2;
+      fxCtx.save();
+      fxCtx.translate(cx, cy);
+      fxCtx.rotate(t * 0.08);
+      for (let i=0;i<12;i++){
+        const r = Math.min(w,h) * (0.08 + i*0.045);
+        fxCtx.beginPath();
+        fxCtx.arc(0,0,r,0,Math.PI*2);
+        fxCtx.strokeStyle = `rgba(255,255,255,${0.025 + 0.02*Math.sin(t*1.6 + i)})`;
+        fxCtx.lineWidth = 0.6 + 0.8*(1+Math.sin(t*2+i))/2 + beatGlitch*0.8;
+        fxCtx.stroke();
+      }
+      fxCtx.restore();
+
+      // particle bloom (lighter composite)
+      fxCtx.globalCompositeOperation = 'lighter';
+      for (let p of particles){
+        p.x += p.vx + (Math.sin((p.y+t*40)*0.003))*0.2;
+        p.y += p.vy + (Math.cos((p.x-t*40)*0.003))*0.2;
+        if (--p.life < 0){
+          p.x = Math.random()*w; p.y = Math.random()*h; p.life = Math.random()*200+60;
+        }
+        // wrap
+        if (p.x<0) p.x+=w; if (p.x>w) p.x-=w; if (p.y<0) p.y+=h; if (p.y>h) p.y-=h;
+        fxCtx.fillStyle = `rgba(200,200,200,${0.02 + p.size*0.02 + beatGlitch*0.05})`;
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.size + beatGlitch*0.8, 0, Math.PI*2);
+        fxCtx.fill();
+      }
+      fxCtx.globalCompositeOperation = 'source-over';
+
+      // decay beat glitch quickly
+      beatGlitch *= 0.9;
     }
 
     // initialize analyser on first user gesture if not yet created
@@ -490,6 +609,7 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopViz();
       else if (isPlaying) startViz();
+      if (document.hidden) stopFx(); else startFx();
     });
 
     // small typewriter for title
@@ -511,6 +631,7 @@
       setTimeout(()=> playerCard.classList.add('visible'), 680);
       // if user loads and audio already playing (rare), attach ctx
       if (!audioCtx && !audio.paused) ensureAudioContext();
+      startFx();
     });
   </script>
 </body>
