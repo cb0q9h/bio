@@ -181,6 +181,39 @@
       .stage::before, .scanlines, .grain, .card-top::after, .shine { animation: none !important; transition: none !important; }
       .card-top, .card-bot { transition: none !important; transform:none !important; opacity:1 !important }
     }
+    html{scroll-behavior:smooth}
+    .scroll-indicator{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:10px;color:var(--white);opacity:.85;cursor:pointer;user-select:none}
+    .scroll-indicator span{font-weight:800;letter-spacing:.8px;font-size:13px}
+    .scroll-indicator svg{width:18px;height:18px;fill:#fff;opacity:.9}
+    .scroll-indicator:hover{opacity:1}
+    .scroll-indicator .dot{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.35;animation: sd 1.8s ease-in-out infinite}
+    @keyframes sd{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(6px);opacity:.7}}
+
+    .blocks{width:min(980px,92%);margin:80px auto 120px;display:flex;flex-direction:column;gap:28px;position:relative;z-index:2}
+    .content-block{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center;background:linear-gradient(180deg,#121212,#1d1d1d);border:1px solid var(--edge);border-radius:24px;overflow:hidden;padding:18px;opacity:0;transform:translateY(28px) scale(.98);transition:opacity .7s cubic-bezier(.2,.9,.2,1), transform .7s cubic-bezier(.2,.9,.2,1);box-shadow:0 12px 48px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04)}
+    .content-block.visible{opacity:1;transform:translateY(0) scale(1)}
+    .content-media{aspect-ratio:16/10;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:#0f0f0f}
+    .content-media img{width:100%;height:100%;object-fit:cover;transform:scale(1);transition:transform 6s ease}
+    .content-block.visible .content-media img{transform:scale(1.06)}
+    .content-body{display:flex;flex-direction:column;gap:10px}
+    .content-body h2{margin:0;color:var(--white);font-size:26px;letter-spacing:.3px}
+    .content-body p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+    .cta-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+    .tg-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);color:#fff;text-decoration:none;border-radius:12px;border:1px solid rgba(255,255,255,.18);padding:10px 14px;font-weight:800;letter-spacing:.4px;transition:transform .2s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1), background .25s cubic-bezier(.4,0,.2,1)}
+    .tg-btn svg{width:18px;height:18px;fill:#fff}
+    .tg-btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 10px 28px rgba(255,255,255,.12);background:rgba(255,255,255,.14)}
+
+    .content-block:nth-child(odd){grid-template-columns:1fr 1.2fr}
+    .content-block:nth-child(odd) .content-media{order:2}
+    .content-block:nth-child(odd) .content-body{order:1}
+
+    @media (max-width:900px){
+      .blocks{gap:22px;margin:48px auto 80px}
+      .content-block{grid-template-columns:1fr;padding:14px;border-radius:18px}
+      .content-media{order:1}
+      .content-body{order:2}
+      .content-body h2{font-size:22px}
+    }
   </style>
 </head>
 <body>
@@ -255,8 +288,79 @@
 
     </div>
 
+    <div class="scroll-indicator" id="scrollIndicator" aria-label="Scroll down">
+      <span>Scroll Down</span>
+      <div class="dot" aria-hidden="true"></div>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16a1 1 0 0 1-.7-.3l-7-7a1 1 0 1 1 1.4-1.4L12 13.59 18.3 7.3a1 1 0 1 1 1.4 1.4l-7 7a1 1 0 0 1-.7.3z"/></svg>
+    </div>
     <div class="overlay" id="overlay" role="button" tabindex="0" aria-label="Click to enter">click to enter</div>
   </div>
+
+  <section class="blocks" id="content">
+    <div class="content-block">
+      <div class="content-media">
+        <img src="https://images.unsplash.com/photo-1484312152213-d713e8b7c053?q=80&w=1200&auto=format&fit=crop" alt="Showcase image 1">
+      </div>
+      <div class="content-body">
+        <h2>Sharp. Minimal. Clean.</h2>
+        <p>Interfaces crafted with high contrast and soft lighting, tuned for clarity and mood.</p>
+        <div class="cta-row">
+          <a class="tg-btn" href="https://t.me/x0xr0" target="_blank" rel="noopener" aria-label="Contact on Telegram">
+            <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
+            <span>Contact</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <div class="content-media">
+        <img src="https://images.unsplash.com/photo-1538439907460-1596cafd4eff?q=80&w=1200&auto=format&fit=crop" alt="Showcase image 2">
+      </div>
+      <div class="content-body">
+        <h2>Motion that feels right</h2>
+        <p>Subtle depth and timing. Elements ease in with intention, never in the way.</p>
+        <div class="cta-row">
+          <a class="tg-btn" href="https://t.me/x0xr0" target="_blank" rel="noopener" aria-label="Contact on Telegram">
+            <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
+            <span>Contact</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <div class="content-media">
+        <img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1200&auto=format&fit=crop" alt="Showcase image 3">
+      </div>
+      <div class="content-body">
+        <h2>Visuals with texture</h2>
+        <p>Soft grain, scanlines and monochrome glow for a cinematic, tactile surface.</p>
+        <div class="cta-row">
+          <a class="tg-btn" href="https://t.me/x0xr0" target="_blank" rel="noopener" aria-label="Contact on Telegram">
+            <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
+            <span>Contact</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <div class="content-media">
+        <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1200&auto=format&fit=crop" alt="Showcase image 4">
+      </div>
+      <div class="content-body">
+        <h2>Built for all screens</h2>
+        <p>Layouts adapt smoothly from phones to desktops with consistent rhythm and weight.</p>
+        <div class="cta-row">
+          <a class="tg-btn" href="https://t.me/x0xr0" target="_blank" rel="noopener" aria-label="Contact on Telegram">
+            <svg viewBox="0 0 24 24"><path d="M21.944 4.667a1.5 1.5 0 0 0-1.7-1.1L3.6 8.1a1.5 1.5 0 0 0-.1 2.9l3.7 1.2 1.4 4.2a1.5 1.5 0 0 0 2.8.1l1.2-2.5 3.7 2.7a1.5 1.5 0 0 0 2.3-1l2.1-9.1a1.5 1.5 0 0 0-.056-.433z"/></svg>
+            <span>Contact</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <script>
     // elements
@@ -272,6 +376,7 @@
     const fx = document.getElementById('fx');
     const ctx = viz.getContext('2d', { alpha: true });
     const fxCtx = fx.getContext('2d', { alpha: true });
+    const scrollIndicator = document.getElementById('scrollIndicator');
 
     // show cards
     function showCards() {
@@ -311,6 +416,13 @@
     overlay.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); overlay.click(); }
     });
+
+    if (scrollIndicator) {
+      scrollIndicator.addEventListener('click', ()=> {
+        const target = document.getElementById('content');
+        if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    }
 
     // keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -652,6 +764,12 @@
       // if user loads and audio already playing (rare), attach ctx
       if (!audioCtx && !audio.paused) ensureAudioContext();
       startFx();
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, {threshold:0.18, rootMargin:'0px 0px -10% 0px'});
+      document.querySelectorAll('.content-block').forEach(el=> io.observe(el));
     });
   </script>
 </body>
