@@ -20,7 +20,7 @@
 
     *{box-sizing:border-box}
     html,body{
-      height:100%;margin:0;
+      min-height:100%;margin:0;
       background:var(--bg);
       font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial;
       -webkit-font-smoothing:antialiased;
@@ -445,6 +445,10 @@
       });
     }
 
+    // ensure viz follows audio state
+    audio.addEventListener('play', () => { startViz(); });
+    audio.addEventListener('pause', () => { stopViz(); });
+
     // format time
     function formatTime(sec){
       if (!isFinite(sec) || sec <= 0) return '0:00';
@@ -731,9 +735,13 @@
 
     // stop viz when page hidden to save CPU
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stopViz();
-      else if (isPlaying) startViz();
-      if (document.hidden) stopFx(); else startFx();
+      if (document.hidden) {
+        stopViz();
+        stopFx();
+      } else {
+        if (!audio.paused) startViz();
+        startFx();
+      }
     });
 
     // small typewriter for title
