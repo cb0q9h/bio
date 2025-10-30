@@ -156,7 +156,7 @@
 
     /* fx sits at the very back; viz above it under cards */
     #fx{position:absolute;inset:0;z-index:0;opacity:.32;mix-blend-mode:soft-light;pointer-events:none;filter: blur(.2px)}
-    #viz{position:absolute;inset:0;z-index:1;opacity:0.28;mix-blend-mode:screen;pointer-events:none}
+    #viz{position:absolute;inset:0;z-index:1;opacity:0.34;mix-blend-mode:screen;pointer-events:none}
     .cursor-trail{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.22}
     .cursor-trail canvas{width:100%;height:100%}
 
@@ -168,6 +168,7 @@
       .controls{gap:10px}
       .icon-btn,.play-btn{transform:scale(.92)}
       .progressWrap{height:8px}
+      #viz{opacity:.24}
     }
     @media (max-width:480px){
       .stage{padding:16px}
@@ -415,6 +416,8 @@
       scrollIndicator.addEventListener('click', ()=> {
         const target = document.getElementById('content');
         if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+        ensureAudioContext();
+        if (audio.paused) { audio.play().catch(()=>{}); }
       });
     }
 
@@ -758,6 +761,15 @@
         });
       }, {threshold:0.18, rootMargin:'0px 0px -10% 0px'});
       document.querySelectorAll('.content-block').forEach(el=> io.observe(el));
+
+      const tryStartOnce = ()=>{
+        ensureAudioContext();
+        if (audio.paused) { audio.play().catch(()=>{}); }
+        window.removeEventListener('click', tryStartOnce);
+        window.removeEventListener('touchstart', tryStartOnce);
+      };
+      window.addEventListener('click', tryStartOnce, {once:true});
+      window.addEventListener('touchstart', tryStartOnce, {once:true, passive:true});
     });
   </script>
 </body>
