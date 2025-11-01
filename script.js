@@ -1,4 +1,33 @@
 const overlay = document.getElementById('overlay');
+
+// Performance & platform helpers
+const isMobileDevice = (()=>{
+  try {
+    return /Mobi|Android|iPhone|iPad|Tablet/i.test(navigator.userAgent) || (('ontouchstart' in window) && window.innerWidth < 900);
+  } catch(e) { return false; }
+})();
+
+function resizeCanvasToDisplaySize(canvas) {
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+  const height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+    return true;
+  }
+  return false;
+}
+
+// Throttle for less CPU on mobile: compute spokes dynamically
+function computeSpokes(w, h) {
+  const minSide = Math.min(w, h);
+  let spokes = Math.floor(minSide / 20); // fewer for small screens
+  spokes = Math.max(12, Math.min(64, spokes));
+  // on mobile reduce further
+  if (isMobileDevice) spokes = Math.max(10, Math.floor(spokes * 0.5));
+  return spokes;
+}
 const topCard = document.getElementById('topCard');
 const playerCard = document.getElementById('playerCard');
 const muteBtn = document.getElementById('muteBtn');
@@ -371,3 +400,72 @@ document.addEventListener('DOMContentLoaded', ()=> {
   window.addEventListener('click', tryStartOnce, {once:true});
   window.addEventListener('touchstart', tryStartOnce, {once:true, passive:true});
 });
+
+
+
+// Safer animation loop using DPR-aware canvas resizing and dynamic spokes
+let rafId = null;
+function visualizerLoop() {
+  // Resize canvases for crispness
+  resizeCanvasToDisplaySize(viz);
+  resizeCanvasToDisplaySize(fx);
+  const w = viz.width;
+  const h = viz.height;
+  // clear
+  ctx.clearRect(0,0,w,h);
+  fxCtx.clearRect(0,0,fx.width,fx.height);
+
+  // compute data
+  if (analyser && typeof analyser.getByteFrequencyData === 'function') {
+    analyser.getByteFrequencyData(dataArray);
+  }
+
+  // draw background rings (cheap)
+  const cx = w/2, cy = h/2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  const spokes = computeSpokes(w, h);
+  const bufferLength = dataArray.length || 0;
+  for (let i=0;i<spokes;i++){
+    const idx = Math.floor(i * bufferLength / spokes);
+    const v = (dataArray[idx] || 0) / 255;
+    if (v < 0.06) continue;
+    const len = (Math.min(w,h) * 0.12) + v * (Math.min(w,h) * 0.38);
+    ctx.strokeStyle = `rgba(255,255,255,${0.02 + v*0.18})`;
+    ctx.lineWidth = Math.max(0.5, 0.6 + v * 1.2);
+    ctx.beginPath();
+    const a = (i/spokes) * Math.PI*2 + performance.now()/2200;
+    ctx.moveTo(Math.cos(a)* (len*0.28), Math.sin(a)* (len*0.28));
+    ctx.lineTo(Math.cos(a)* len, Math.sin(a)* len);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // light FX (cheap blur)
+  fxCtx.save();
+  fxCtx.globalAlpha = 0.06;
+  fxCtx.fillRect(0,0,fx.width,fx.height);
+  fxCtx.restore();
+
+  rafId = requestAnimationFrame(visualizerLoop);
+}
+
+// Start visualizer safely
+function startVisualizer() {
+  if (rafId) return;
+  // Only run visualizer in visible tab to save battery
+  if (document.hidden) { document.addEventListener('visibilitychange', ()=> { if (!document.hidden) visualizerLoop(); }, {once:true}); return; }
+  visualizerLoop();
+}
+
+// Stop visualizer when appropriate
+function stopVisualizer() {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null;
+}
+
+// Kick off when analyser is ready
+function ensureVisualizerActive() {
+  if (!analyser) return;
+  startVisualizer();
+}
