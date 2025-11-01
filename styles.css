@@ -209,3 +209,137 @@ html{scroll-behavior:smooth}
 }
 
 
+
+
+/* Added responsive visualizer/footer fixes */
+
+/* --- Visualizer full-screen (responsive & efficient) --- */
+#viz, #fx {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Ensure content sits above the visualizer */
+body > *:not(#viz):not(#fx) { position: relative; z-index: 1; }
+
+/* Fix bottom player card so it sits above content and is responsive */
+.card-bot {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 20px !important;
+  transform: translateX(-50%) !important;
+  width: min(900px, calc(100% - 32px)) !important;
+  max-width: calc(100% - 32px) !important;
+  margin: 0 !important;
+  box-shadow: 0 14px 48px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* Reduce visual complexity on small screens for performance */
+@media (max-width: 820px) {
+  .card-top { padding: 12px; border-radius: 18px; }
+  .card-bot { bottom: 12px; width: calc(100% - 24px); border-radius: 14px; padding: 12px; }
+  .thumb { width:56px;height:56px }
+  .title{font-size:15px}
+}
+
+/* Ensure no overflow from root containers */
+html, body { height: 100%; min-height: 100%; background: var(--bg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+main, .content { position: relative; z-index: 1; }
+
+
+/* --- Layout bottom spacing and scroll fix --- */
+main, .content, body {
+  padding-bottom: 160px !important; /* space for fixed player */
+}
+
+.scroll-down, .scroll-hint, .scroll-text {
+  margin-bottom: 100px !important;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 820px) {
+  main, .content, body {
+    padding-bottom: 120px !important;
+  }
+  .scroll-down, .scroll-hint, .scroll-text {
+    margin-bottom: 80px !important;
+  }
+}
+
+/* Smooth fade transition area so it doesn’t look cut off */
+.content::after {
+  content: "";
+  display: block;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+}
+
+
+/* --- Connected top & bottom blocks, proper scroll spacing --- */
+.card-bot {
+  position: relative !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 0 auto 60px auto !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.card-top {
+  margin-bottom: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* ensure scroll hint is below blocks */
+.scroll-down, .scroll-hint, .scroll-text {
+  display: block;
+  margin-top: 40px !important;
+  margin-bottom: 140px !important;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* add bottom padding so end of page isn't cut off */
+body, html {
+  padding-bottom: 160px !important;
+}
+
+@media (max-width: 820px) {
+  .card-bot {
+    margin-bottom: 40px !important;
+  }
+  .scroll-down, .scroll-hint, .scroll-text {
+    margin-top: 32px !important;
+    margin-bottom: 100px !important;
+  }
+  body, html {
+    padding-bottom: 120px !important;
+  }
+}
+
+
+/* --- Ensure visible space at very bottom of the page --- */
+.page-end-space {
+  width: 100%;
+  height: 300px;
+  display: block;
+  background: transparent;
+}
+
+body::after {
+  content: "";
+  display: block;
+  height: 300px;
+}
