@@ -217,6 +217,18 @@
       .content-body h2{font-size:22px}
     }
   </style>
+
+<script>
+(function(){
+  var isMobile = /Mobi|Android|iPhone|iPad|Tablet/i.test(navigator.userAgent) || (('ontouchstart' in window) && window.innerWidth < 900);
+  if (isMobile) {
+    try { var a = document.getElementById('audio'); if (a) { a.preload = 'none'; a.pause(); a.removeAttribute('autoplay'); }} catch(e){}
+    document.documentElement.classList.add('is-mobile-no-audio');
+  } else {
+    document.documentElement.classList.remove('is-mobile-no-audio');
+  }
+})();
+</script>
 </head>
 <body>
   <div class="scanlines"></div>
@@ -755,5 +767,6 @@
       window.addEventListener('touchstart', tryStartOnce, {once:true, passive:true});
     });
   </script>
+<div class='page-end-space'></div>
 </body>
 </html>
